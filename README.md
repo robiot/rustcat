@@ -4,13 +4,11 @@
 
 <img src="./imgassets/example.png" style="border-radius:0.43rem"/>
 <br />
-<br />
+
 About
 ------------------------
 Rustcat is a port listener that can be used for different purposes.\
 It is basically like netcat but with fewer options
-
-<br />
 
 Why use Rustcat?
 ------------------------
@@ -18,16 +16,12 @@ Why use Rustcat?
 * It is easy to use
 * Uses colors
 
-<br />
-
 Installation
 ------------------------
 You can install rustcat from the [Releases](./releases/latest) tab and copy it to /usr/bin (optional)
 ```
 cp ./rc /usr/bin
 ```
-
-<br />
 
 Compiling yourself
 ------------------------
@@ -43,15 +37,11 @@ cargo build --release
 cp ./rc /usr/bin
 ```
 
-<br />
-
 Usage
 ------------------------
 ```
 rc [options] [destination] [port]
 ```
-
-<br />
 
 Usage Examples
 ------------------------
