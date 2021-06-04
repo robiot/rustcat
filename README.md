@@ -1,4 +1,4 @@
-## ⚙️ Rustcat ⚙️
+# ⚙️ Rustcat ⚙️
 
 ## -- Basic Netcat Alternative -- 
 
