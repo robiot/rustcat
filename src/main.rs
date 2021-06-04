@@ -77,6 +77,7 @@ fn listen(opts: &Opts) -> std::io::Result<()>{
             
             let (stream, _) = listener.accept().unwrap();
             let t1 = pipe_thread(std::io::stdin(), stream.try_clone().unwrap());
+            println!("{}[+]{} Connection received", color::Fg(color::LightGreen), color::Fg(color::Reset));
             let t2 = pipe_thread(stream, std::io::stdout());
             t1.join().unwrap();
             t2.join().unwrap();
