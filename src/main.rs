@@ -46,7 +46,7 @@ fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>  where R
         loop {
             let len = r.read(&mut buffer).unwrap();
             if len == 0 {
-                println!("Connection lost");
+                println!("{}[-]{}Connection lost",color::Fg(color::LightRed), color::Fg(color::Reset));
                 std::process::exit(0x0100);
             }
             w.write(&buffer[..len]).unwrap();
