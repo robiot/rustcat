@@ -1,9 +1,10 @@
 # ⚙️ Rustcat ⚙️
+![Workflow](https://github.com/robiot/rustcat/actions/workflows/rust.yml/badge.svg)
+<br />
 
-## -- Basic Netcat Alternative -- 
+**-- Basic Netcat Alternative --**
 
 <img src="./imgassets/example.png" style="border-radius:0.43rem"/>
-<br />
 
 About
 ------------------------
