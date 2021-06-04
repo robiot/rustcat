@@ -18,7 +18,7 @@ Why use Rustcat?
 
 Installation
 ------------------------
-You can install rustcat from the [Releases](./releases/latest) tab and run
+You can install rustcat from the [Releases](https://github.com/robiot/rustcat/releases/latest) tab and run
 ```
 chmod +x rc
 ```
