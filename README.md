@@ -18,7 +18,11 @@ Why use Rustcat?
 
 Installation
 ------------------------
-You can install rustcat from the [Releases](./releases/latest) tab and copy it to /usr/bin (optional)
+You can install rustcat from the [Releases](./releases/latest) tab and run
+```
+chmod +x rc
+```
+Copy it to /usr/bin (optional)
 ```
 cp ./rc /usr/bin
 ```
