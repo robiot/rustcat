@@ -1,0 +1,18 @@
+[package]
+name = "rc"
+version = "0.0.1"
+authors = ["robiot"]
+description = "rustcat - Like Netcat but in Rust"
+license = "MIT"
+repository = "https://github.com/robiot/rustcat"
+edition = "2018"
+
+[dependencies]
+termion = "1.5.6"
+getopts = "0.2"
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
