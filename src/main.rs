@@ -36,6 +36,11 @@ fn print_error(err: &str) {
     eprintln!("{}rc:{} {}", color::Fg(color::LightRed), color::Fg(color::Reset), err);
 }
 
+/* Print when connection recieved */
+fn print_started_listen(opts: &Opts) {
+    println!("Listening on {}{}{}:{}{}{}", color::Fg(color::LightGreen), opts.host, color::Fg(color::Reset), color::Fg(color::LightCyan), opts.port, color::Fg(color::Reset)); //move this?
+}
+
 /* Piped thread */
 fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>  where R: std::io::Read + Send + 'static, W: std::io::Write + Send + 'static
 {
@@ -55,7 +60,6 @@ fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>  where R
 
 /* Listen on given host and port */
 fn listen(opts: &Opts) -> std::io::Result<()>{
-    println!("Listening on {}{}{}:{}{}{}", color::Fg(color::LightGreen), opts.host, color::Fg(color::Reset), color::Fg(color::LightCyan), opts.port, color::Fg(color::Reset)); //move this?
 
     match opts.transport {
         Transport::Tcp => {
@@ -65,7 +69,8 @@ fn listen(opts: &Opts) -> std::io::Result<()>{
                     return Err(err)
                 }
             };
-            
+
+            print_started_listen(opts);
             let (stream, _) = listener.accept().unwrap();
             let t1 = pipe_thread(std::io::stdin(), stream.try_clone().unwrap());
             println!("{}[+]{} Connection received", color::Fg(color::LightGreen), color::Fg(color::Reset));
@@ -76,6 +81,7 @@ fn listen(opts: &Opts) -> std::io::Result<()>{
 
         Transport::Udp => {
             //todo: add udp alternative
+            println!("Udp is curently not supported. Please wait for a future update")
         }
     }
     return Ok(());
