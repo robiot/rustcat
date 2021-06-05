@@ -38,7 +38,7 @@ cargo build --release
 ```
 3. Run 
 ```
-sudo chmod ./install.sh
+sudo chmod +x install.sh
 ```
 And
 ```
