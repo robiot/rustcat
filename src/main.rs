@@ -23,7 +23,7 @@ enum Protocol {
 
 /* Help -h */
 fn print_help(program: &str, opts: Options, code: i32) {
-    let brief = format!("Usage: {} [options] [destination] [port]", program);
+    let brief = format!("[📖] Usage: {} [options] [destination] [port]", program);
     print!("{}", opts.usage(&brief));
     if code != 0 {
         std::process::exit(code);
@@ -37,7 +37,7 @@ fn print_error(err: &str) {
 
 /* Print when connection recieved */
 fn print_started_listen(opts: &Opts) {
-    println!("Listening on {}{}{}:{}{}{}", color::Fg(color::LightGreen), opts.host, color::Fg(color::Reset), color::Fg(color::LightCyan), opts.port, color::Fg(color::Reset)); //move this?
+    println!("[👂] Listening on {}{}{}:{}{}{}", color::Fg(color::LightGreen), opts.host, color::Fg(color::Reset), color::Fg(color::LightCyan), opts.port, color::Fg(color::Reset)); //move this?
 }
 
 /* Piped thread */
@@ -48,7 +48,7 @@ fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>  where R
         loop {
             let len = r.read(&mut buffer).unwrap();
             if len == 0 {
-                println!("\n{}[-]{}Connection lost",color::Fg(color::LightRed), color::Fg(color::Reset));
+                println!("\n{}[-]{}[❌]Connection lost",color::Fg(color::LightRed), color::Fg(color::Reset));
                 std::process::exit(0x0100);
             }
             w.write(&buffer[..len]).unwrap();
@@ -66,7 +66,7 @@ fn listen(opts: &Opts) -> std::io::Result<()>{
 
             let (stream, _) = listener.accept()?;
             let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
-            println!("{}[+]{} Connection received", color::Fg(color::LightGreen), color::Fg(color::Reset));
+            println!("{}[+]{} [📡]Connection received", color::Fg(color::LightGreen), color::Fg(color::Reset));
             let t2 = pipe_thread(stream, std::io::stdout());
             t1.join().unwrap();
             t2.join().unwrap();
@@ -74,7 +74,7 @@ fn listen(opts: &Opts) -> std::io::Result<()>{
 
         Protocol::Udp => {
             //todo: add udp alternative
-            println!("Udp is curently not supported. Please wait for a future update")
+            println!("[🚧] Udp is curently not supported. Please wait for a future update")
         }
     }
     return Ok(());
@@ -86,11 +86,11 @@ fn main() {
     let program = args[0].clone();
 
     let mut opts = Options::new();
-    opts.optflag("h", "help", "This help text");
-    opts.optflag("v", "version", "Application Version");
-    opts.optflag("l", "", "Listen mode");
-    opts.optflag("p", "", "Listen port");
-    opts.optflag("u", "", "UDP mode (Not available yet)");
+    opts.optflag("h", "help", "[📖] This help text");
+    opts.optflag("v", "version", "[⭐] Application Version");
+    opts.optflag("l", "", "[📡] Listen mode");
+    opts.optflag("p", "", "[📡] Listen port");
+    opts.optflag("u", "", "[🚧] UDP mode (Not available yet)");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
