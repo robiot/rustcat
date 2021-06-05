@@ -3,7 +3,6 @@
 // by: robiot
 ////////////////////
 
-//Todo: Replace unwrap
 use termion::color;
 use getopts::Options;
 
@@ -14,10 +13,10 @@ const  __VERSION__: &'static str = env!("CARGO_PKG_VERSION");
 struct Opts<'a> {
     host: &'a str,
     port: &'a str,
-    transport: Transport
+    transport: Protocol
 }
 
-enum Transport {
+enum Protocol {
     Tcp,
     Udp,
 }
@@ -60,26 +59,20 @@ fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>  where R
 
 /* Listen on given host and port */
 fn listen(opts: &Opts) -> std::io::Result<()>{
-
     match opts.transport {
-        Transport::Tcp => {
-            let listener = match std::net::TcpListener::bind(format!("{}:{}",opts.host, opts.port)) {
-                Ok(m) => m,
-                Err(err) => {
-                    return Err(err)
-                }
-            };
-
+        Protocol::Tcp => {
+            let listener = std::net::TcpListener::bind(format!("{}:{}",opts.host, opts.port))?;
             print_started_listen(opts);
-            let (stream, _) = listener.accept().unwrap();
-            let t1 = pipe_thread(std::io::stdin(), stream.try_clone().unwrap());
+
+            let (stream, _) = listener.accept()?;
+            let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
             println!("{}[+]{} Connection received", color::Fg(color::LightGreen), color::Fg(color::Reset));
             let t2 = pipe_thread(stream, std::io::stdout());
             t1.join().unwrap();
             t2.join().unwrap();
         }
 
-        Transport::Udp => {
+        Protocol::Udp => {
             //todo: add udp alternative
             println!("Udp is curently not supported. Please wait for a future update")
         }
@@ -115,29 +108,35 @@ fn main() {
         return;
     }
     
-    // If any arguement given
-    let (opt_host, opt_port) = if matches.free.len() == 1 && matches.opt_present("l") && matches.opt_present("p"){
-        ("0.0.0.0", matches.free[0].as_str())
-    } else if matches.free.len() == 2 && matches.opt_present("l"){
-        (matches.free[0].as_str(), matches.free[1].as_str())
+
+    if matches.opt_present("l") {
+        let (opt_host, opt_port) = if matches.free.len() == 1 && matches.opt_present("p"){
+            ("0.0.0.0", matches.free[0].as_str())
+        } else if matches.free.len() == 2{
+            (matches.free[0].as_str(), matches.free[1].as_str())
+        }
+        else {
+            print_help(&program, opts, 1);
+            ("","")
+        };
+
+        let opts = Opts {
+            host: opt_host,
+            port: opt_port,
+            transport: if matches.opt_present("u") {
+                Protocol::Udp
+            } else {
+                Protocol::Tcp
+            }
+        };
+    
+        if let Err(err) = listen(&opts) {
+            print_error(&err.to_string());
+            return;
+        };
     }
     else {
         print_help(&program, opts, 1);
-        ("","")
-    };
-
-    let opts = Opts {
-        host: opt_host,
-        port: opt_port,
-        transport: if matches.opt_present("u") {
-            Transport::Udp
-        } else {
-            Transport::Tcp
-        }
-    };
-
-    if let Err(err) = listen(&opts) {
-        print_error(&err.to_string());
-        return;
+        return
     };
 }
