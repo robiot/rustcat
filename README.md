@@ -21,7 +21,7 @@ Installation
 ------------------------
 You can install rustcat from the [Releases](https://github.com/robiot/rustcat/releases/latest) tab and run
 ```
-chmod +x rc
+sudo chmod +x rc
 ```
 Copy it to /usr/bin (optional)
 ```
