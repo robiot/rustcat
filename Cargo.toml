@@ -1,6 +1,6 @@
 [package]
 name = "rc"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["robiot"]
 description = "rustcat - Like Netcat but in Rust"
 license = "MIT"
