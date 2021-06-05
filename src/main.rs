@@ -1,19 +1,19 @@
 ////////////////////
-// Rustcat (rc) 
+// Rustcat (rc)
 // by: robiot
 ////////////////////
 
-use termion::color;
 use getopts::Options;
+use termion::color;
 
 /* Global Variables */
-const  __VERSION__: &'static str = env!("CARGO_PKG_VERSION");
+const __VERSION__: &'static str = env!("CARGO_PKG_VERSION");
 
 /* Use laters */
 struct Opts<'a> {
     host: &'a str,
     port: &'a str,
-    transport: Protocol
+    transport: Protocol,
 }
 
 enum Protocol {
@@ -32,23 +32,43 @@ fn print_help(program: &str, opts: Options, code: i32) {
 
 /* Prints error */
 fn print_error(err: &str) {
-    eprintln!("{}rc:{} {}", color::Fg(color::LightRed), color::Fg(color::Reset), err);
+    eprintln!(
+        "{}rc:{} {}",
+        color::Fg(color::LightRed),
+        color::Fg(color::Reset),
+        err
+    );
 }
 
 /* Print when connection recieved */
 fn print_started_listen(opts: &Opts) {
-    println!("Listening on {}{}{}:{}{}{}", color::Fg(color::LightGreen), opts.host, color::Fg(color::Reset), color::Fg(color::LightCyan), opts.port, color::Fg(color::Reset)); //move this?
+    println!(
+        "Listening on {}{}{}:{}{}{}",
+        color::Fg(color::LightGreen),
+        opts.host,
+        color::Fg(color::Reset),
+        color::Fg(color::LightCyan),
+        opts.port,
+        color::Fg(color::Reset)
+    ); //move this?
 }
 
 /* Piped thread */
-fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>  where R: std::io::Read + Send + 'static, W: std::io::Write + Send + 'static
+fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>
+where
+    R: std::io::Read + Send + 'static,
+    W: std::io::Write + Send + 'static,
 {
     std::thread::spawn(move || {
         let mut buffer = [0; 1024];
         loop {
             let len = r.read(&mut buffer).unwrap();
             if len == 0 {
-                println!("\n{}[-]{}Connection lost",color::Fg(color::LightRed), color::Fg(color::Reset));
+                println!(
+                    "\n{}[-]{}Connection lost",
+                    color::Fg(color::LightRed),
+                    color::Fg(color::Reset)
+                );
                 std::process::exit(0x0100);
             }
             w.write(&buffer[..len]).unwrap();
@@ -58,15 +78,19 @@ fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>  where R
 }
 
 /* Listen on given host and port */
-fn listen(opts: &Opts) -> std::io::Result<()>{
+fn listen(opts: &Opts) -> std::io::Result<()> {
     match opts.transport {
         Protocol::Tcp => {
-            let listener = std::net::TcpListener::bind(format!("{}:{}",opts.host, opts.port))?;
+            let listener = std::net::TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
             print_started_listen(opts);
 
             let (stream, _) = listener.accept()?;
             let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
-            println!("{}[+]{} Connection received", color::Fg(color::LightGreen), color::Fg(color::Reset));
+            println!(
+                "{}[+]{} Connection received",
+                color::Fg(color::LightGreen),
+                color::Fg(color::Reset)
+            );
             let t2 = pipe_thread(stream, std::io::stdout());
             t1.join().unwrap();
             t2.join().unwrap();
@@ -104,20 +128,18 @@ fn main() {
         print_help(&program, opts, 0);
         return;
     } else if matches.opt_present("v") {
-        println!("Rustcat v{}",__VERSION__);
+        println!("Rustcat v{}", __VERSION__);
         return;
     }
-    
 
     if matches.opt_present("l") {
-        let (opt_host, opt_port) = if matches.free.len() == 1 && matches.opt_present("p"){
+        let (opt_host, opt_port) = if matches.free.len() == 1 && matches.opt_present("p") {
             ("0.0.0.0", matches.free[0].as_str())
-        } else if matches.free.len() == 2{
+        } else if matches.free.len() == 2 {
             (matches.free[0].as_str(), matches.free[1].as_str())
-        }
-        else {
+        } else {
             print_help(&program, opts, 1);
-            ("","")
+            ("", "")
         };
 
         let opts = Opts {
@@ -127,16 +149,15 @@ fn main() {
                 Protocol::Udp
             } else {
                 Protocol::Tcp
-            }
+            },
         };
-    
+
         if let Err(err) = listen(&opts) {
             print_error(&err.to_string());
             return;
         };
-    }
-    else {
+    } else {
         print_help(&program, opts, 1);
-        return
+        return;
     };
 }
