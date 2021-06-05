@@ -1,4 +1,4 @@
-rustcat="./target/debug/rc"
+rustcat="./target/release/rc"
 usrbin="/usr/bin/rc"
 
 echo "Copying" $rustcat "To" $usrbin
