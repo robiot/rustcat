@@ -6,8 +6,6 @@
 //Todo: Replace unwrap
 use termion::color;
 use getopts::Options;
-use std::io::Write;
-
 
 /* Global Variables */
 const  __VERSION__: &'static str = env!("CARGO_PKG_VERSION");
@@ -46,7 +44,7 @@ fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>  where R
         loop {
             let len = r.read(&mut buffer).unwrap();
             if len == 0 {
-                println!("{}[-]{}Connection lost",color::Fg(color::LightRed), color::Fg(color::Reset));
+                println!("\n{}[-]{}Connection lost",color::Fg(color::LightRed), color::Fg(color::Reset));
                 std::process::exit(0x0100);
             }
             w.write(&buffer[..len]).unwrap();
@@ -59,16 +57,9 @@ fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>  where R
 fn listen(opts: &Opts) -> std::io::Result<()>{
     println!("Listening on {}{}{}:{}{}{}", color::Fg(color::LightGreen), opts.host, color::Fg(color::Reset), color::Fg(color::LightCyan), opts.port, color::Fg(color::Reset)); //move this?
 
-    match std::io::stdout().flush() {
-        Ok(m) => m,
-        Err(err) => {
-            return Err(err);
-        }
-    };
-
     match opts.transport {
         Transport::Tcp => {
-            let listener = match std::net::TcpListener::bind((opts.host, opts.port.parse::<u16>().expect("Not a valid port"))) { // todo: Better handling if not a valid number given
+            let listener = match std::net::TcpListener::bind(format!("{}:{}",opts.host, opts.port)) {
                 Ok(m) => m,
                 Err(err) => {
                     return Err(err)
