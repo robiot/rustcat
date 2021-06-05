@@ -29,7 +29,7 @@ checksum = "b8f8bdf33df195859076e54ab11ee78a1b208382d3a26ec40d142ffc1ecc49ef"
 
 [[package]]
 name = "rc"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "getopts",
  "termion",
