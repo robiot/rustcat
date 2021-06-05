@@ -23,7 +23,7 @@ enum Protocol {
 
 /* Help -h */
 fn print_help(program: &str, opts: Options, code: i32) {
-    let brief = format!("Usage: {} [options] [destination] [port]", program);
+    let brief = format!("[📖] Usage: {} [options] [destination] [port]", program);
     print!("{}", opts.usage(&brief));
     if code != 0 {
         std::process::exit(code);
@@ -91,6 +91,7 @@ fn listen(opts: &Opts) -> std::io::Result<()> {
                 color::Fg(color::LightGreen),
                 color::Fg(color::Reset)
             );
+          
             let t2 = pipe_thread(stream, std::io::stdout());
             t1.join().unwrap();
             t2.join().unwrap();
@@ -98,7 +99,7 @@ fn listen(opts: &Opts) -> std::io::Result<()> {
 
         Protocol::Udp => {
             //todo: add udp alternative
-            println!("Udp is curently not supported. Please wait for a future update")
+            println!("[🚧] Udp is curently not supported. Please wait for a future update")
         }
     }
     return Ok(());
@@ -114,7 +115,7 @@ fn main() {
     opts.optflag("v", "version", "Application Version");
     opts.optflag("l", "", "Listen mode");
     opts.optflag("p", "", "Listen port");
-    opts.optflag("u", "", "UDP mode (Not available yet)");
+    opts.optflag("u", "", "[🚧] UDP mode (Not available yet)");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
