@@ -23,7 +23,7 @@ enum Protocol {
 
 /* Help -h */
 fn print_help(program: &str, opts: Options, code: i32) {
-    let brief = format!("[📖] Usage: {} [options] [destination] [port]", program);
+    let brief = format!("Usage: {} [options] [destination] [port]", program);
     print!("{}", opts.usage(&brief));
     if code != 0 {
         std::process::exit(code);
