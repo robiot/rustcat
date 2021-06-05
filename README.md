@@ -36,10 +36,13 @@ To compile yourself
 ```
 cargo build --release
 ```
-3. Go into ./target/release and here you have "rc"
-4. (Optional) copy it to /usr/bin
+3. Run 
 ```
-cp ./rc /usr/bin
+sudo chmod ./install.sh
+```
+And
+```
+./install.sh
 ```
 
 Usage
