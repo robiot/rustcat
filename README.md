@@ -17,9 +17,9 @@ Why use Rustcat?
 
 Installation
 ------------------------
-To install from crates.io:
+To install from crates.io (The name will be "rustcat" instead of rc):
 ```
-cargo install rustcat && mv ~/.cargo/bin/rustcat ~/.cargo/bin/rc
+cargo install rustcat
 ```
 
 To install the latest github release:
