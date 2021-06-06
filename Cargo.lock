@@ -155,15 +155,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rc"
-version = "0.0.2"
-dependencies = [
- "getopts",
- "rustyline",
- "termion",
-]
-
-[[package]]
 name = "redox_syscall"
 version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -189,6 +180,15 @@ checksum = "528532f3d801c87aec9def2add9ca802fe569e44a544afe633765267840abe64"
 dependencies = [
  "getrandom",
  "redox_syscall",
+]
+
+[[package]]
+name = "rustcat"
+version = "0.0.2"
+dependencies = [
+ "getopts",
+ "rustyline",
+ "termion",
 ]
 
 [[package]]
