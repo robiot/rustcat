@@ -10,3 +10,4 @@ edition = "2018"
 [dependencies]
 termion = "1.5.6"
 getopts = "0.2"
+rustyline = "8.2.0"
