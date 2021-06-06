@@ -17,13 +17,13 @@ Why use Rustcat?
 
 Installation
 ------------------------
-You can install rustcat from the [Releases](https://github.com/robiot/rustcat/releases/latest) tab and run
+To install the latest release you download the [install.sh](https://github.com/robiot/rustcat/blob/main/install.sh) and run
 ```
-sudo chmod +x rc
+sudo chmod +x install.sh
 ```
-Copy it to /usr/bin (optional)
+Then
 ```
-cp ./rc /usr/bin
+./install.sh
 ```
 
 Compiling yourself
@@ -32,11 +32,7 @@ To compile yourself
 1. Download the source
 2. Cd into the dir and run...
 ```
-sudo chmod +x install.sh
-```
-And
-```
-./install.sh
+cargo build --release
 ```
 
 Usage
