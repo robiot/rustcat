@@ -30,11 +30,7 @@ Compiling yourself
 ------------------------
 To compile yourself
 1. Download the source
-2. Cd into the directory and run...
-```
-cargo build --release
-```
-3. Run 
+2. Cd into the dir and run...
 ```
 sudo chmod +x install.sh
 ```
