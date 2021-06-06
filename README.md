@@ -17,13 +17,9 @@ Why use Rustcat?
 
 Installation
 ------------------------
-To install the latest release you download the [install.sh](https://github.com/robiot/rustcat/blob/main/install.sh) and run
+To install the latest release you run
 ```
-sudo chmod +x install.sh
-```
-Then
-```
-./install.sh
+bash <(curl -s https://raw.githubusercontent.com/robiot/rustcat/main/install.sh)
 ```
 
 Compiling yourself
