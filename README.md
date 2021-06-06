@@ -17,7 +17,12 @@ Why use Rustcat?
 
 Installation
 ------------------------
-To install the latest release you run
+To install from crates.io:
+```
+cargo install rustcat && mv ~/.cargo/bin/rustcat ~/.cargo/bin/rc
+```
+
+To install the latest github release:
 ```
 bash <(curl -s https://raw.githubusercontent.com/robiot/rustcat/main/install.sh)
 ```
@@ -30,6 +35,7 @@ To compile yourself
 ```
 cargo build --release
 ```
+You may also want to rename the executable to rc
 
 Usage
 ------------------------
