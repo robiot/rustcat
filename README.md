@@ -2,7 +2,7 @@
 
 **-- Basic Netcat Alternative --**
 
-<img src="https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/example.png" style="border-radius:0.43rem"/>
+<img src="https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/example.png"/>
 
 About
 ------------------------
