@@ -1,4 +1,4 @@
-# ⚙️ Rustcat ⚙️ ![Workflow](https://github.com/robiot/rustcat/actions/workflows/rust.yml/badge.svg)
+# ⚙️ Rustcat ⚙️ ![Workflow](https://github.com/robiot/rustcat/actions/workflows/rust.yml/badge.svg) [![dependency status](https://deps.rs/crate/rustcat/0.0.2/status.svg)](https://deps.rs/crate/rustcat/0.0.2)
 
 **-- Basic Netcat Alternative --**
 
