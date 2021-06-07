@@ -21,7 +21,10 @@ To install from crates.io:
 ```
 cargo install rustcat && sudo cp ~/.cargo/bin/rustcat /usr/local/bin/rc && cargo uninstall rustcat
 ```
-
+To install from source:
+```
+bash <(curl -s https://raw.githubusercontent.com/robiot/rustcat/main/latestinstall.sh)
+```
 To install the latest github release:
 ```
 bash <(curl -s https://raw.githubusercontent.com/robiot/rustcat/main/install.sh)
