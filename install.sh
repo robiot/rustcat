@@ -10,7 +10,7 @@ main(){
     sudo cp -f rc /usr/local/bin/rc
     sudo chmod 755 /usr/local/bin/rc
     cd ~/
-    echo "Rustcat sucessfully installed in /usr/bin/rc | Run with 'rc"
+    echo "Rustcat sucessfully installed in /usr/local/bin/rc | Run with 'rc"
 }
 
 installwget() {
