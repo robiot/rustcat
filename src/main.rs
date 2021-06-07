@@ -71,7 +71,7 @@ where
                 );
                 std::process::exit(0x0100);
             }
-            w.write(&buffer[..len]).unwrap();
+            w.write_all(&buffer[..len]).unwrap();
             w.flush().unwrap();
         }
     })
