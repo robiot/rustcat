@@ -3,6 +3,9 @@
 // by: robiot & contributors
 /////////////////////////////
 
+use rustyline::error::ReadlineError;
+use rustyline::Editor;
+use std::io::{self, Write};
 use getopts::Options;
 use termion::color;
 
@@ -14,6 +17,7 @@ struct Opts<'a> {
     host: &'a str,
     port: &'a str,
     transport: Protocol,
+    mode: Mode,
 }
 
 enum Protocol {
@@ -21,13 +25,16 @@ enum Protocol {
     Udp,
 }
 
+enum Mode {
+    Normal,
+    Beta,
+}
+
 /* Help -h */
-fn print_help(program: &str, opts: Options, code: i32) {
+fn print_help(program: &str, opts: Options) {
     let brief = format!("Usage: {} [options] [destination] [port]", program);
     print!("{}", opts.usage(&brief));
-    if code != 0 {
-        std::process::exit(code);
-    }
+    std::process::exit(0);
 }
 
 /* Prints error */
@@ -50,7 +57,7 @@ fn print_started_listen(opts: &Opts) {
         color::Fg(color::LightCyan),
         opts.port,
         color::Fg(color::Reset)
-    ); //move this?
+    );
 }
 
 /* Piped thread */
@@ -69,8 +76,9 @@ where
                     color::Fg(color::LightRed),
                     color::Fg(color::Reset)
                 );
-                std::process::exit(0x0100);
+                std::process::exit(0);
             }
+            
             w.write_all(&buffer[..len]).unwrap();
             w.flush().unwrap();
         }
@@ -84,22 +92,99 @@ fn listen(opts: &Opts) -> std::io::Result<()> {
             let listener = std::net::TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
             print_started_listen(opts);
 
-            let (stream, _) = listener.accept()?;
-            let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
-            println!(
-                "{}[+]{} Connection received",
-                color::Fg(color::LightGreen),
-                color::Fg(color::Reset)
-            );
-          
-            let t2 = pipe_thread(stream, std::io::stdout());
-            t1.join().unwrap();
-            t2.join().unwrap();
+            let (mut stream, _) = listener.accept()?;
+            match opts.mode {
+                Mode::Normal => {
+                    let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
+                    let t2 = pipe_thread(stream, std::io::stdout());
+                    t1.join().unwrap();
+                    t2.join().unwrap();
+                }
+                Mode::Beta => {
+
+                    // For command line history there is a better way of doing it
+                    // You can constantly send the input to the revshell and let it do the stuff
+                    // instead of doing the history locally and getting the line deleted
+                    let t = pipe_thread(stream.try_clone().unwrap(), std::io::stdout()); 
+                    let mut rl = Editor::<()>::new();
+                
+                    loop {
+                        let readline = rl.readline(">> "); // &buffer[..len]
+                        match readline {
+                            Ok(command) => {
+                                rl.add_history_entry(command.as_str());
+                                let command = command.clone() + "\n";
+                                stream
+                                    .write_all(command.as_bytes())
+                                    .expect("Faild to send TCP.");
+                            }
+                            Err(ReadlineError::Interrupted) => {
+                                std::process::exit(0x0);
+                            }
+                            Err(ReadlineError::Eof) => {
+                                std::process::exit(0x0);
+                            }
+                            Err(err) => {
+                                println!("Error: {:?}", err);
+                                break;
+                            }
+                        }
+                    }
+                
+                    t.join().unwrap();
+                }
+            }
         }
 
         Protocol::Udp => {
-            //todo: add udp alternative
-            println!("[🚧] Udp is curently not supported. Please wait for a future update")
+            // Can be made better probably...
+            // Rustline is needed here because else you cant delete characters
+            let socket = std::net::UdpSocket::bind(format!("{}:{}", opts.host, opts.port))?;
+            print_started_listen(opts);
+        
+            use std::sync::{Arc, Mutex};
+            let addr: Arc<Mutex<Option<std::net::SocketAddr>>> = Arc::from(Mutex::new(None));
+        
+            let addr_clone = addr.clone();
+            let socket_clone = socket.try_clone().unwrap();
+            std::thread::spawn(move || loop {
+                let mut buffer = [0; 1024];
+                let (len, src_addr) = socket_clone.recv_from(&mut buffer).unwrap();
+                *addr_clone.lock().unwrap() = Some(src_addr);
+
+                io::stdout().write_all(&buffer[..len]).unwrap();
+                io::stdout().flush().unwrap();
+            });
+        
+            loop {
+                let mut rl = Editor::<()>::new();
+                loop {
+                    let readline = rl.readline(">> ");
+                    match readline {
+                        Ok(command) => {
+                            rl.add_history_entry(command.as_str());
+                            let command = command.clone() + "\n";
+                            
+                            let addr_option = *addr.lock().unwrap();
+                            if let Some(addr) = addr_option {
+                                socket.send_to(command.as_bytes(), addr).unwrap();
+                            } else {
+                                panic!("Cannot send udp packet");
+                            }
+                        }
+                        Err(ReadlineError::Interrupted) => {
+                            std::process::exit(0);
+                        }
+                        Err(ReadlineError::Eof) => {
+                            std::process::exit(0);
+                        }
+                        Err(err) => {
+                            println!("Error: {:?}", err);
+                            std::process::exit(0);
+                        }
+                    }
+                }
+            }
         }
     }
     return Ok(());
@@ -113,9 +198,10 @@ fn main() {
     let mut opts = Options::new();
     opts.optflag("h", "help", "This help text");
     opts.optflag("v", "version", "Application Version");
+    opts.optflag("H", "history", "Command history for tcp (Beta)");
     opts.optflag("l", "", "Listen mode");
     opts.optflag("p", "", "Listen port");
-    opts.optflag("u", "", "[🚧] UDP mode (Not available yet)");
+    opts.optflag("u", "", "UDP mode (Beta)");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -126,7 +212,7 @@ fn main() {
     };
 
     if matches.opt_present("h") {
-        print_help(&program, opts, 0);
+        print_help(&program, opts);
         return;
     } else if matches.opt_present("v") {
         println!("Rustcat v{}", __VERSION__);
@@ -139,7 +225,7 @@ fn main() {
         } else if matches.free.len() == 2 {
             (matches.free[0].as_str(), matches.free[1].as_str())
         } else {
-            print_help(&program, opts, 1);
+            print_help(&program, opts);
             ("", "")
         };
 
@@ -151,6 +237,11 @@ fn main() {
             } else {
                 Protocol::Tcp
             },
+            mode: if matches.opt_present("H") {
+                Mode::Beta
+            } else {
+                Mode::Normal
+            },
         };
 
         if let Err(err) = listen(&opts) {
@@ -158,7 +249,7 @@ fn main() {
             return;
         };
     } else {
-        print_help(&program, opts, 1);
+        print_help(&program, opts);
         return;
     };
 }
