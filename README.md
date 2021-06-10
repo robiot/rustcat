@@ -57,6 +57,14 @@ Listen to port **55660** on localhost :
 ```
 rc -lp 55660
 ```
+Listen to port **55660** on localhost with command history :
+```
+rc -lpH 55660
+```
+Listen to port **55660** on localhost udp :
+```
+rc -lpu 55660
+```
 Listen to port **55660** on specified ip (192.168.1.10) :
 ```
 rc -l 192.168.1.10 55660
