@@ -25,7 +25,7 @@ To install from source:
 ```
 bash <(curl -s https://raw.githubusercontent.com/robiot/rustcat/main/latestinstall.sh)
 ```
-To install the latest github release:
+To install the latest github release (May not work on some distros):
 ```
 bash <(curl -s https://raw.githubusercontent.com/robiot/rustcat/main/install.sh)
 ```
