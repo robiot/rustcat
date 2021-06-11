@@ -17,6 +17,17 @@ Why use Rustcat?
 
 Installation
 ------------------------
+### Arch
+```
+git clone https://aur.archlinux.org/rustcat.git
+cd rustcat
+makepkg -si
+```
+Or with yay:
+```
+yay -S rustcat
+```
+### Other Distributions
 To install from crates.io:
 ```
 cargo install rustcat && sudo cp ~/.cargo/bin/rustcat /usr/local/bin/rc && cargo uninstall rustcat
