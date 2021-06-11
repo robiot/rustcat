@@ -40,6 +40,7 @@ To install the latest github release (May not work on some distros):
 ```
 bash <(curl -s https://raw.githubusercontent.com/robiot/rustcat/main/install.sh)
 ```
+*If you want it on windows you need to remove everything related to termion and rustyline from the source*
 
 Compiling yourself
 ------------------------
