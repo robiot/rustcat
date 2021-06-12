@@ -12,13 +12,18 @@ It is basically like netcat but with fewer options
 Why use Rustcat?
 ------------------------
 * Serves it purpose of listening to ports
-* It is easy to use
 * Has command history
+* It is easy to use
 * Supports udp
 * Uses colors
 
 Installation
 ------------------------
+### Debian
+```
+wget https://github.com/robiot/rustcat/releases/latest/download/rustcat_amd64.deb
+sudo apt install ./rustcat_amd64.deb
+```
 ### Arch
 ```
 git clone https://aur.archlinux.org/rustcat.git
@@ -48,7 +53,6 @@ To compile yourself
 ```
 cargo build --release
 ```
-You may also want to rename the executable to rc
 
 Usage
 ------------------------
