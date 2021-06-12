@@ -30,7 +30,7 @@ yay -S rustcat
 ### Other Distributions
 To install from crates.io:
 ```
-cargo install rustcat && sudo cp ~/.cargo/bin/rustcat /usr/local/bin/rc && cargo uninstall rustcat
+cargo install rustcat
 ```
 To install from source:
 ```
