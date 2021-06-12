@@ -1,11 +1,15 @@
 [package]
 name = "rustcat"
-version = "0.0.4"
+version = "0.0.5"
 authors = ["robiot"]
 description = "rustcat - Like Netcat but in Rust"
 license = "MIT"
 repository = "https://github.com/robiot/rustcat"
 edition = "2018"
+
+[[bin]]
+name = "rc"
+path = "src/main.rs"
 
 [dependencies]
 termion = "1.5.6"
