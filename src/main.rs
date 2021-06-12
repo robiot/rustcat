@@ -101,7 +101,6 @@ fn listen(opts: &Opts) -> std::io::Result<()> {
                     t2.join().unwrap();
                 }
                 Mode::Beta => {
-
                     // For command line history there is a better way of doing it
                     // You can constantly send the input to the revshell and let it do the stuff
                     // instead of doing the history locally and getting the line deleted
@@ -109,7 +108,7 @@ fn listen(opts: &Opts) -> std::io::Result<()> {
                     let mut rl = Editor::<()>::new();
                 
                     loop {
-                        let readline = rl.readline(">> "); // &buffer[..len]
+                        let readline = rl.readline(">> "); // &buffer[..len] ?
                         match readline {
                             Ok(command) => {
                                 rl.add_history_entry(command.as_str());
@@ -119,10 +118,10 @@ fn listen(opts: &Opts) -> std::io::Result<()> {
                                     .expect("Faild to send TCP.");
                             }
                             Err(ReadlineError::Interrupted) => {
-                                std::process::exit(0x0);
+                                std::process::exit(0);
                             }
                             Err(ReadlineError::Eof) => {
-                                std::process::exit(0x0);
+                                std::process::exit(0);
                             }
                             Err(err) => {
                                 println!("Error: {:?}", err);
