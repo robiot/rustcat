@@ -17,6 +17,17 @@ Why use Rustcat?
 
 Installation
 ------------------------
+### Arch
+```
+git clone https://aur.archlinux.org/rustcat.git
+cd rustcat
+makepkg -si
+```
+Or with yay:
+```
+yay -S rustcat
+```
+### Other Distributions
 To install from crates.io:
 ```
 cargo install rustcat && sudo cp ~/.cargo/bin/rustcat /usr/local/bin/rc && cargo uninstall rustcat
@@ -29,6 +40,7 @@ To install the latest github release (May not work on some distros):
 ```
 bash <(curl -s https://raw.githubusercontent.com/robiot/rustcat/main/install.sh)
 ```
+*If you want it on windows you need to remove everything related to termion and rustyline from the source*
 
 Compiling yourself
 ------------------------
