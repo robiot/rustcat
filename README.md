@@ -32,7 +32,7 @@ To install from crates.io:
 ```
 cargo install rustcat
 ```
-To install the latest github release (May not work on some distros):
+To install the latest github release without compiling:
 ```
 bash <(curl -s https://raw.githubusercontent.com/robiot/rustcat/main/install.sh)
 ```
