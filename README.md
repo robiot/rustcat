@@ -13,6 +13,8 @@ Why use Rustcat?
 ------------------------
 * Serves it purpose of listening to ports
 * It is easy to use
+* Has command history
+* Supports udp
 * Uses colors
 
 Installation
@@ -32,7 +34,7 @@ To install from crates.io:
 ```
 cargo install rustcat
 ```
-To install the latest github release without compiling:
+To install the latest github release without compiling yourself:
 ```
 bash <(curl -s https://raw.githubusercontent.com/robiot/rustcat/main/install.sh)
 ```
