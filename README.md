@@ -19,7 +19,7 @@ Why use Rustcat?
 
 Installation
 ------------------------
-### Debian
+### Debian/Ubuntu
 ```
 wget https://github.com/robiot/rustcat/releases/latest/download/rustcat_amd64.deb
 sudo apt install ./rustcat_amd64.deb
