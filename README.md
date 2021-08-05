@@ -77,3 +77,7 @@ Listen to port **55660** on specified ip (192.168.1.10) :
 ```
 rc -l 192.168.1.10 55660
 ```
+Create a reverse shell on port **55660**:
+```
+rc -rp 55660
+```
