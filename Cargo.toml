@@ -1,6 +1,6 @@
 [package]
 name = "rustcat"
-version = "0.0.5"
+version = "1.0.0"
 authors = ["robiot"]
 description = "rustcat - Like Netcat but in Rust"
 license = "MIT"
@@ -15,3 +15,4 @@ path = "src/main.rs"
 termion = "1.5.6"
 getopts = "0.2"
 rustyline = "8.2.0"
+socket2 = "0.3.8"
