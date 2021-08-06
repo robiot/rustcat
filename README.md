@@ -1,13 +1,25 @@
-# ⚙️ Rustcat ⚙️ ![Workflow](https://github.com/robiot/rustcat/actions/workflows/rust.yml/badge.svg) [![dependency status](https://deps.rs/crate/rustcat/0.0.2/status.svg)](https://deps.rs/crate/rustcat/0.0.2)
+<div align="center" >
+  <br>
+  <img src="https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/banner.png">
+  <br>
+  
+  <img alt="GitHub All Releases" src="https://img.shields.io/github/contributors/robiot/rustcat?label=Contributors">
+  <img alt="GitHub Latest Release" src="https://img.shields.io/github/v/tag/robiot/rustcat?label=Latest%20Release">
+  <img alt="AUR version" src="https://img.shields.io/aur/version/rustcat">
+  <img alt="Crates.io" src="https://img.shields.io/crates/d/rustcat?label=Cargo%20Downloads">
+  <img alt="GitHub All Releases" src="https://img.shields.io/github/downloads/robiot/rustcat/total?label=GitHub%20Downloads">
+  <img alt="Build Stats" src="https://github.com/robiot/rustcat/actions/workflows/rust.yml/badge.svg">
+  <hr>
+</div>
 
-**-- Basic Netcat Alternative --**
+| <p align="center"><a href="https://crates.io/crates/rustcat">:package: Cargo</a></p>            | <p align="center"><a href="https://github.com/robiot/rustcat/releases">:cyclone: Kali / Debian </p>                 | <p align="center"><a href="https://aur.archlinux.org/packages/rustcat/">🏗️ Arch </a></p>                       | <p align="center"><a href="https://github.com/robiot/rustcat/releases">:computer: Other </a></p>                     |
+| ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| <p align="center"><img src="https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/cargo.png" /></p> | <p align="center"><img src="https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/kali.png" /></p> | <p align="center"><img src="https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/arch.png" /></p> | <p align="center"><img src="https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/others.png" /></p> |
+| `cargo install rustcat` | [Read the install guide](https://github.com/robiot/rustcat/wiki/Installation-Guide#kalidebian)     | `yay -S rustcat`                                                                                               |  [Read the install guide](https://github.com/robiot/rustcat/wiki/Installation-Guide#other)     
+<hr>
 
-<img src="https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/example.png"/>
-
-About
-------------------------
-Rustcat is a port listener that can be used for different purposes.\
-It is basically like netcat but with fewer options
+# :thinking: What Is Rustcat?
+Rustcat is a modern port listener / Reverse Shell that is very easy to use.
 
 Why use Rustcat?
 ------------------------
@@ -17,42 +29,6 @@ Why use Rustcat?
 * Supports udp
 * Uses colors
 
-Installation
-------------------------
-### Debian/Ubuntu
-```
-wget https://github.com/robiot/rustcat/releases/latest/download/rustcat_amd64.deb
-sudo apt install ./rustcat_amd64.deb
-```
-### Arch
-```
-git clone https://aur.archlinux.org/rustcat.git
-cd rustcat
-makepkg -si
-```
-Or with yay:
-```
-yay -S rustcat
-```
-### Other Distributions
-To install from crates.io:
-```
-cargo install rustcat
-```
-To install the latest github release without compiling yourself:
-```
-bash <(curl -s https://raw.githubusercontent.com/robiot/rustcat/main/install.sh)
-```
-*If you want it on windows you need to remove everything related to termion and rustyline from the source*
-
-Compiling yourself
-------------------------
-To compile yourself
-1. Download the source
-2. Cd into the dir and run...
-```
-cargo build --release
-```
 
 Usage
 ------------------------
@@ -83,7 +59,7 @@ Listen to port **55660** on specified ip (192.168.1.10) :
 ```
 rc -l 192.168.1.10 55660
 ```
-Create a reverse shell on port **55660**:
+Create a bash reverse shell on port **55660**:
 ```
-rc -rp 55660
+rc -rp 55660 bash
 ```
