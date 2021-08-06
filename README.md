@@ -19,47 +19,38 @@
 <hr>
 
 # :thinking: What Is Rustcat?
-Rustcat is a modern port listener / Reverse Shell that is very easy to use.
+![Ex](.github/assets/usage-ex.gif)
+:art: Rustcat is a modern port listener & Reverse Shell that is very easy to use.
 
-Why use Rustcat?
-------------------------
-* Serves it purpose of listening to ports
-* Has command history
-* It is easy to use
-* Supports udp
-* Uses colors
+# :sparkles: Features
+* Listen on ports
+* Command history
+* Reverse shell
+* Udp
+* Colors
 
+# :gear: Why Rustcat?
+Rustcat is a modern port listener that is easier to use and understand than most of the older ones on the market.
 
-Usage
-------------------------
-```
-rc [options] [destination] [port]
-```
+## :baby: Everything Easy
+![Ex](.github/assets/easy-revshell.gif)
+Starting a listener is just as simple as `rc -lp port`. While in netcat you would do something like `nc -nlvp port`.
 
-Usage Examples
-------------------------
+And creating a reverse shell has never been easier, `rc -rp port shell` is all you need. No more long piping stdin, stdout, stderr from /dev/tcp into /bin/shell that you always forget.
 
-Help :
-```
-rc --help
-```
-Listen to port **55660** on localhost :
-```
-rc -lp 55660
-```
-Listen to port **55660** on localhost with command history :
-```
-rc -lpH 55660
-```
-Listen to port **55660** on localhost udp :
-```
-rc -lpu 55660
-```
-Listen to port **55660** on specified ip (192.168.1.10) :
-```
-rc -l 192.168.1.10 55660
-```
-Create a bash reverse shell on port **55660**:
-```
-rc -rp 55660 bash
-```
+## :page_with_curl: Command History
+![Appearance](.github/assets/history-ex.gif)
+Command history is something we all need. How annoying isn't it when you accidently type a long command wrong, then you have to rewrite the entire thing.
+
+But Rustcat fixes that with command history. Just add -H and you will get command history (`rc -lpH port`), unlike netcat where you have to use another application and do `rlwrap -cAr nc -nlvp port`.
+
+## :art: Appearance
+![Appearance](.github/assets/easy.png)
+
+A little splash of color doesn't hurt :).
+
+# :book: Full Installation Guide
+You can find the guide [here](https://github.com/robiot/rustcat/wiki/Installation-Guide)
+
+# :bulb: Usage
+A basic usage guide can be found [here](https://github.com/robiot/rustcat/wiki/Basic-Usage)
