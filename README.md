@@ -30,7 +30,6 @@
 * Colors
 
 # :gear: Why Rustcat?
-Rustcat is a modern port listener that is easier to use and understand than most of the older ones on the market.
 
 ## :baby: Everything Easy
 ![Ex](.github/assets/easy-revshell.gif)
