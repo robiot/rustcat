@@ -35,7 +35,7 @@
 ![Ex](.github/assets/easy-revshell.gif)
 Starting a listener is just as simple as `rc -lp port`. While in netcat you would do something like `nc -nlvp port`.
 
-And creating a reverse shell has never been easier, `rc -rp port shell` is all you need. No more long piping stdin, stdout, stderr in/out from /dev/tcp into /bin/shell that you always forget.
+And creating a reverse shell has never been easier, `rc -rp port shell` is all you need. No more long /dev/tcp stuff that you always forget.
 
 ## :page_with_curl: Command History
 ![Appearance](.github/assets/history-ex.gif)
