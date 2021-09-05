@@ -1,8 +1,8 @@
 [package]
 name = "rustcat"
-version = "1.0.1"
+version = "1.1.0"
 authors = ["robiot"]
-description = "rustcat - Like Netcat but in Rust"
+description = "rustcat - The Modern Port Listener & Reverse Shell"
 license = "MIT"
 repository = "https://github.com/robiot/rustcat"
 edition = "2018"
