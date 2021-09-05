@@ -1,0 +1,1 @@
+Before contributing to this project, please read our [Code of conduct](/CODE_OF_CONDUCT.md)
