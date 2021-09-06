@@ -38,7 +38,7 @@
 <hr>
 
 # 🤔 What Is Rustcat?
-![Ex](.github/assets/usage-ex.gif)
+![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/usage-ex.gif)
 🎨 Rustcat is a modern port listener & Reverse Shell that is very easy to use.
 
 # ✨ Features
