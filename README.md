@@ -39,7 +39,7 @@
 
 # 🤔 What Is Rustcat?
 ![Ex](.github/assets/usage-ex.gif)
-:art: Rustcat is a modern port listener & Reverse Shell that is very easy to use.
+🎨 Rustcat is a modern port listener & Reverse Shell that is very easy to use.
 
 # ✨ Features
 * Listen on ports
@@ -51,19 +51,19 @@
 # ⚙️ Why Rustcat?
 
 ## 👶 Everything Easy
-![Ex](.github/assets/easy-revshell.gif)
+![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/easy-revshell.gif)
 Starting a listener is just as simple as `rc -lp port`. While in netcat you would do something like `nc -nlvp port`.
 
 And creating a reverse shell has never been easier, `rc -rp port shell` is all you need. No more long /dev/tcp stuff that you always forget.
 
 ## 📃 Command History
-![Appearance](.github/assets/history-ex.gif)
+![Appearance](https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/history-ex.gif)
 Command history is something we all need. How annoying isn't it when you accidently type a long command wrong, then you have to rewrite the entire thing.
 
 But Rustcat fixes that with command history. Just add -H and you will get command history (`rc -lpH port`), unlike netcat where you have to use another application and do `rlwrap -cAr nc -nlvp port`.
 
 ## 🎨 Appearance
-![Appearance](.github/assets/easy.png)
+![Appearance](https://raw.githubusercontent.com/robiot/rustcat/main/.github/assets/easy.png)
 
 A little splash of color doesn't hurt :).
 
