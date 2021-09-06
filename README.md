@@ -15,7 +15,7 @@
 | **[Cargo][cargo_lnk]**       | **[Arch Linux][arch_lnk]**   | **[Debian/Kali][kali_lnk]**            | **[Other][other_lnk]**                       |
 |:----------------------------:|:----------------------------:|:--------------------------------------:|:--------------------------------------------:|
 | [![cargo_img]][cargo_lnk]    | [![arch_img]][arch_lnk]      | [![kali_img]][kali_lnk]                | [![other_img]][other_lnk]                    |
-| `cargo install rustcat`      | `yay -S rustcat`             | [Read the install guide][debian_guide] | [Read the install guide](other_guide)        |
+| `cargo install rustcat`      | `yay -S rustcat`             | [Read the install guide][debian_guide] | [Read the install guide][other_guide]        |
 
 
 [cargo_lnk]: https://crates.io/crates/rustcat
