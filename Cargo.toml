@@ -12,7 +12,6 @@ name = "rc"
 path = "src/main.rs"
 
 [dependencies]
+structopt = "0.3.23"
 termion = "1.5.6"
-getopts = "0.2"
-rustyline = "8.2.0"
-socket2 = "0.3.8"
+rustyline = "9.0.0"
