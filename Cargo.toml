@@ -1,6 +1,6 @@
 [package]
 name = "rustcat"
-version = "1.1.0"
+version = "1.1.1"
 authors = ["robiot"]
 description = "rustcat - The Modern Port Listener & Reverse Shell"
 license = "MIT"
