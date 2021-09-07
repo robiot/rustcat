@@ -1,11 +1,11 @@
 /*
-options.rs
+Name: options.rs
+Description: Options for listener.
 */
 
-
-pub struct Opts<'a> {
-    pub host: &'a str,
-    pub port: &'a str,
+pub struct Opts {
+    pub host: String,
+    pub port: String,
     pub transport: Protocol,
     pub mode: Mode,
 }
@@ -17,5 +17,5 @@ pub enum Protocol {
 
 pub enum Mode {
     Normal,
-    Beta,
+    History,
 }
