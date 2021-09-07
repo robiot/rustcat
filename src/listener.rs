@@ -1,13 +1,13 @@
 /*
-listener.rs
+Name: listener.rs
+Description: Listens on given arguments.
 */
 
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
-use termion::color;
 use std::io::{self, Write};
+use termion::color;
 
-// Custom 
 use super::options;
 
 /* Print when started listening */
@@ -40,7 +40,6 @@ where
                 );
                 std::process::exit(0);
             }
-            
             w.write_all(&buffer[..len]).unwrap();
             w.flush().unwrap();
         }
@@ -62,13 +61,12 @@ pub fn listen(opts: &options::Opts) -> std::io::Result<()> {
                     t1.join().unwrap();
                     t2.join().unwrap();
                 }
-                options::Mode::Beta => {
+                options::Mode::History => {
                     // For command line history there is a better way of doing it
                     // You can constantly send the input to the revshell and let it do the stuff
                     // instead of doing the history locally and getting the line deleted
-                    let t = pipe_thread(stream.try_clone().unwrap(), std::io::stdout()); 
+                    let t = pipe_thread(stream.try_clone().unwrap(), std::io::stdout());
                     let mut rl = Editor::<()>::new();
-                
                     loop {
                         let readline = rl.readline(">> "); // &buffer[..len] ?
                         match readline {
@@ -91,7 +89,6 @@ pub fn listen(opts: &options::Opts) -> std::io::Result<()> {
                             }
                         }
                     }
-                
                     t.join().unwrap();
                 }
             }
@@ -102,10 +99,8 @@ pub fn listen(opts: &options::Opts) -> std::io::Result<()> {
             // Rustline is needed here because else you cant delete characters
             let socket = std::net::UdpSocket::bind(format!("{}:{}", opts.host, opts.port))?;
             print_started_listen(opts);
-        
             use std::sync::{Arc, Mutex};
             let addr: Arc<Mutex<Option<std::net::SocketAddr>>> = Arc::from(Mutex::new(None));
-        
             let addr_clone = addr.clone();
             let socket_clone = socket.try_clone().unwrap();
             std::thread::spawn(move || loop {
@@ -116,7 +111,6 @@ pub fn listen(opts: &options::Opts) -> std::io::Result<()> {
                 io::stdout().write_all(&buffer[..len]).unwrap();
                 io::stdout().flush().unwrap();
             });
-        
             loop {
                 let mut rl = Editor::<()>::new();
                 loop {
@@ -125,7 +119,6 @@ pub fn listen(opts: &options::Opts) -> std::io::Result<()> {
                         Ok(command) => {
                             rl.add_history_entry(command.as_str());
                             let command = command.clone() + "\n";
-                            
                             let addr_option = *addr.lock().unwrap();
                             if let Some(addr) = addr_option {
                                 socket.send_to(command.as_bytes(), addr)?;
