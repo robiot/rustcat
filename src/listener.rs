@@ -128,9 +128,7 @@ pub fn listen(opts: &options::Opts) -> std::io::Result<()> {
                             
                             let addr_option = *addr.lock().unwrap();
                             if let Some(addr) = addr_option {
-                                socket.send_to(command.as_bytes(), addr).unwrap();
-                            } else {
-                                panic!("Cannot send udp packet");
+                                socket.send_to(command.as_bytes(), addr)?;
                             }
                         }
                         Err(ReadlineError::Interrupted) => {
