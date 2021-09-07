@@ -10,7 +10,7 @@ The flow for contributing to open source software is:
 When creating new files, place this template on the top and modify the text.
 ```
 /*
-Name: revshell.rs
-Description: Create a unix reverse shell (with bash etc).
+Name: Name-here.rs
+Description: Description here. 
 */
 ```
