@@ -1,6 +1,6 @@
 <div align="center" >
   <br>
-  <img src="https://raw.githubusercontent.com/robiot/rustcat/main/assets/banner.png">
+  <img src="https://raw.githubusercontent.com/robiot/rustcat/main/img/banner.png">
   <br>
   
   <img alt="GitHub All Releases" src="https://img.shields.io/github/contributors/robiot/rustcat?label=Contributors">
@@ -19,26 +19,26 @@
 
 
 [cargo_lnk]: https://crates.io/crates/rustcat
-[cargo_img]: https://raw.githubusercontent.com/robiot/rustcat/main/assets/icons/cargo.png
+[cargo_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/cargo.png
 
 [arch_lnk]: https://aur.archlinux.org/packages/rustcat/
-[arch_img]: https://raw.githubusercontent.com/robiot/rustcat/main/assets/icons/arch.png
+[arch_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/arch.png
 
 [kali_lnk]: https://github.com/robiot/rustcat
-[kali_img]: https://raw.githubusercontent.com/robiot/rustcat/main/assets/icons/kali.png
+[kali_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/kali.png
 [debian_guide]: https://github.com/robiot/rustcat/wiki/Installation-Guide#kalidebian
 
 [other_lnk]: https://github.com/robiot/rustcat
-[other_img]: https://raw.githubusercontent.com/robiot/rustcat/main/assets/icons/others.png
+[other_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/others.png
 [other_guide]: https://github.com/robiot/rustcat/wiki/Installation-Guide
 
 [//]: # (This is for later)
 [barch_lnk]: https://www.blackarch.org/tools.html
-[barch_img]: https://raw.githubusercontent.com/robiot/rustcat/main/assets/icons/barch.png
+[barch_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/barch.png
 <hr>
 
 # 🤔 What Is Rustcat?
-![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/assets/usage-ex.gif)
+![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/img/usage-ex.gif)
 🎨 Rustcat is a modern port listener & Reverse Shell that is very easy to use.
 
 # ✨ Features
@@ -51,19 +51,19 @@
 # ⚙️ Why Rustcat?
 
 ## 👶 Everything Easy
-![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/assets/easy-revshell.gif)
+![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/img/easy-revshell.gif)
 Starting a listener is just as simple as `rc -lp port`. While in netcat you would do something like `nc -nlvp port`.
 
 And creating a reverse shell has never been easier, `rc -rp port shell` is all you need. No more long /dev/tcp stuff that you always forget.
 
 ## 📃 Command History
-![Appearance](https://raw.githubusercontent.com/robiot/rustcat/main/assets/history-ex.gif)
+![Appearance](https://raw.githubusercontent.com/robiot/rustcat/main/img/history-ex.gif)
 Command history is something we all need. How annoying isn't it when you accidently type a long command wrong, then you have to rewrite the entire thing.
 
 But Rustcat fixes that with command history. Just add -H and you will get command history (`rc -lpH port`), unlike netcat where you have to use another application and do `rlwrap -cAr nc -nlvp port`.
 
 ## 🎨 Appearance
-![Appearance](https://raw.githubusercontent.com/robiot/rustcat/main/assets/easy.png)
+![Appearance](https://raw.githubusercontent.com/robiot/rustcat/main/img/easy.png)
 
 A little splash of color doesn't hurt :).
 
