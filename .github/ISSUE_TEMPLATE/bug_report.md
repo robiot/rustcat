@@ -1,6 +1,6 @@
 ---
 name: "Bug report"
-about: Create a report to help us improve
+about: Create a bug report for rustcat.
 title: ''
 labels: bug
 assignees: ''
@@ -13,21 +13,21 @@ assignees: ''
 2. PLEASE FILL OUT ALL REQUIRED INFORMATION BELOW! Otherwise it might take more time to properly handle this bug report.
 -->
 
-
-### ISSUE TYPE
+#### ISSUE TYPE:
  - Bug Report
 
 
-
-### OS / ENVIRONMENT
+#### OS / ENVIRONMENT:
 1. [ ] Operating system: 
-2. [ ] Version:
+2. [ ] Rustcat version:
 
+#### STEPS TO REPRODUCE:
+1.
+2.
+3.
 
+#### EXPECTED BEHAVIOUR:
+explanation
 
-### STEPS TO REPRODUCE
-
-
-### EXPECTED BEHAVIOUR
-
-### ACTUAL BEHAVIOUR
+#### ACTUAL BEHAVIOUR:
+explanation
