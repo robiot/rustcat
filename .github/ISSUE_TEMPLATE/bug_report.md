@@ -13,7 +13,7 @@ assignees: ''
 2. PLEASE FILL OUT ALL REQUIRED INFORMATION BELOW! Otherwise it might take more time to properly handle this bug report.
 -->
 
-#### ISSUE TYPE:
+### ISSUE TYPE:
  - Bug Report
 
 
@@ -31,3 +31,5 @@ explanation
 
 #### ACTUAL BEHAVIOUR:
 explanation
+
+#### Additional information (optional):
