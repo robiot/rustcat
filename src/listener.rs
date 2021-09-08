@@ -24,7 +24,7 @@ where
         loop {
             let len = r.read(&mut buffer).unwrap();
             if len == 0 {
-                println!("\n{} Connection lost", "[-]".red(),);
+                println!("\n{} Connection lost", "[-]".red());
                 std::process::exit(0);
             }
             w.write_all(&buffer[..len]).unwrap();
