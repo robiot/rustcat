@@ -3,21 +3,18 @@
 // Licence: MIT
 //
 
+use colored::Colorize;
 use structopt::StructOpt;
-use termion::color;
 
 mod input;
 mod listener;
 mod options;
-mod revshell;
+
+#[cfg(unix)]
+mod unixshell;
 
 fn print_error(err: String) {
-    eprintln!(
-        "{}rc:{} {}",
-        color::Fg(color::LightRed),
-        color::Fg(color::Reset),
-        err
-    );
+    eprintln!("{} {}", "rc:".red(), err);
 }
 
 fn main() {
@@ -34,7 +31,14 @@ fn main() {
 
     // Reverse Shell
     if opts.rshell != None {
-        if let Err(err) = revshell::unixshell(opt_host, opt_port, opts.rshell.unwrap()) {
+        // Block usage on windows
+        if cfg!(windows) {
+            print_error("Reverse shells is currently not supported for windows".to_string());
+            return;
+        }
+
+        #[cfg(unix)]
+        if let Err(err) = unixshell::shell(opt_host, opt_port, opts.rshell.unwrap()) {
             print_error(err.to_string());
         }
         return;
