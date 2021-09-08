@@ -4,7 +4,6 @@
 main(){
     echo "Welcome to the Rustcat Debian installer"
     which curl >/dev/null && echo "Curl installed, moving on..." || sudo apt install curl
-    which wget >/dev/null && echo "Curl installed, moving on..." || sudo apt install wget
 
     echo "Getting latest version..."
     version=$(curl --silent "https://api.github.com/repos/robiot/rustcat/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | cut -c 2-)
@@ -13,7 +12,7 @@ main(){
     echo "Found $name"
 
     cd /tmp
-    sudo rm -rf /tmp/${name} && wget https://github.com/robiot/rustcat/releases/latest/download/${name} && sudo apt install ./${name}
+    sudo rm -rf /tmp/${name} && curl -O https://github.com/robiot/rustcat/releases/latest/download/${name} && sudo apt install ./${name}
 
     if [ $? -eq 0 ]; then
         echo "Rustcat $version sucessfully installed! | Run with 'rc"
