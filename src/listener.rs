@@ -3,24 +3,15 @@ Name: listener.rs
 Description: Listens on given arguments.
 */
 
+use colored::Colorize;
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
 use std::io::{self, Write};
-use termion::color;
 
 use super::options;
 
-/* Print when started listening */
 fn print_started_listen(opts: &options::Opts) {
-    println!(
-        "Listening on {}{}{}:{}{}{}",
-        color::Fg(color::LightGreen),
-        opts.host,
-        color::Fg(color::Reset),
-        color::Fg(color::LightCyan),
-        opts.port,
-        color::Fg(color::Reset)
-    );
+    println!("Listening on {}:{}", opts.host.green(), opts.port.cyan());
 }
 
 fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>
@@ -33,11 +24,7 @@ where
         loop {
             let len = r.read(&mut buffer).unwrap();
             if len == 0 {
-                println!(
-                    "\n{}[-]{}Connection lost",
-                    color::Fg(color::LightRed),
-                    color::Fg(color::Reset)
-                );
+                println!("\n{} Connection lost", "[-]".red(),);
                 std::process::exit(0);
             }
             w.write_all(&buffer[..len]).unwrap();
@@ -78,10 +65,10 @@ pub fn listen(opts: &options::Opts) -> std::io::Result<()> {
                                     .expect("Faild to send TCP.");
                             }
                             Err(ReadlineError::Interrupted) => {
-                                std::process::exit(0);
+                                break;
                             }
                             Err(ReadlineError::Eof) => {
-                                std::process::exit(0);
+                                break;
                             }
                             Err(err) => {
                                 println!("Error: {:?}", err.to_string());
@@ -125,10 +112,10 @@ pub fn listen(opts: &options::Opts) -> std::io::Result<()> {
                             }
                         }
                         Err(ReadlineError::Interrupted) => {
-                            std::process::exit(0);
+                            break;
                         }
                         Err(ReadlineError::Eof) => {
-                            std::process::exit(0);
+                            break;
                         }
                         Err(err) => {
                             println!("Error: {:?}", err);

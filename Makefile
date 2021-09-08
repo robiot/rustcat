@@ -1,3 +1,4 @@
+#Makefile to create release files
 RELEASE_PATH = "pkg-env/release"
 RELEASE_VERSION := ${shell cargo pkgid | cut -d# -f2 | cut -d: -f2}
 BIN_NAME = "rc"
@@ -6,6 +7,7 @@ BIN_NAME = "rc"
 install:
 	cargo install cross
 	rustup target add x86_64-unknown-linux-musl
+	rustup target add x86_64-pc-windows-gnu
 
 .PHONY: clean
 clean:
@@ -16,7 +18,7 @@ all:
 	make clean
 	make linux
 	make deb
-
+	
 
 .PHONY: linux
 linux:
@@ -29,3 +31,10 @@ deb:
 	@echo "Building Debian Package..."
 	cargo deb --target=x86_64-unknown-linux-musl
 	mkdir -p ${RELEASE_PATH} && cp -rf target/x86_64-unknown-linux-musl/debian/rustcat_* ${RELEASE_PATH}
+
+
+.PHONY: win
+win:
+	@echo "Building for Windows..."
+	cross build --release --target=x86_64-pc-windows-gnu
+	mkdir -p ${RELEASE_PATH} && zip ${RELEASE_PATH}/rustcat_${RELEASE_VERSION}_win64.zip target/x86_64-pc-windows-gnu/release/${BIN_NAME}.exe

