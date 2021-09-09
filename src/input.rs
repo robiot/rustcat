@@ -13,7 +13,7 @@ pub struct Opts {
     pub history: bool,
 
     /// Listen mode
-    #[structopt(short, long = "listen")]
+    #[structopt(short, long = "listen", conflicts_with = "rshell")]
     pub listen_mode: bool,
 
     /// UDP mode
@@ -25,7 +25,7 @@ pub struct Opts {
     pub port: Option<String>,
 
     /// Reverse shell
-    #[structopt(short, long)]
+    #[structopt(short, long, conflicts_with_all = &["listen_mode", "udp_mode", "history"])]
     pub rshell: Option<String>,
 
     // Host:ip
