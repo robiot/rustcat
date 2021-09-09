@@ -1,5 +1,5 @@
 /*
-Name: revshell.rs
+Name: unixshell.rs
 Description: Create a unix reverse shell (with bash etc).
 */
 
