@@ -49,9 +49,10 @@ pub fn listen(opts: &options::Opts) -> std::io::Result<()> {
                     t2.join().unwrap();
                 }
                 options::Mode::History => {
-                    // For command line history there is a better way of doing it
-                    // You can constantly send the input to the revshell and let it do the stuff
-                    // instead of doing the history locally and getting the line deleted
+                    // For command line history there is a better way of doing it, atleast for unix
+                    // You write a custom function that does the same as "stty cbreak -echo"
+                    // It disables automatic printing of characters when you press up arrow, and disables line buffering
+
                     let t = pipe_thread(stream.try_clone().unwrap(), std::io::stdout());
                     let mut rl = Editor::<()>::new();
                     loop {
