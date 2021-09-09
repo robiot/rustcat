@@ -18,6 +18,7 @@ all:
 	make clean
 	make linux
 	make deb
+	make win
 	
 
 .PHONY: linux
