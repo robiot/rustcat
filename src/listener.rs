@@ -8,9 +8,10 @@ use rustyline::error::ReadlineError;
 use rustyline::Editor;
 use std::io::{self, Write};
 
-use super::options;
+use super::utils;
 
-fn print_started_listen(opts: &options::Opts) {
+
+fn print_started_listen(opts: &utils::Opts) {
     println!("Listening on {}:{}", opts.host.green(), opts.port.cyan());
 }
 
@@ -22,33 +23,45 @@ where
     std::thread::spawn(move || {
         let mut buffer = [0; 1024];
         loop {
-            let len = r.read(&mut buffer).unwrap();
+            let len = match r.read(&mut buffer) {
+                Ok(t) => t,
+                Err(err) => {
+                    utils::print_error(err.to_string());
+                    std::process::exit(0);
+                }
+            };
             if len == 0 {
                 println!("\n{} Connection lost", "[-]".red());
                 std::process::exit(0);
             }
-            w.write_all(&buffer[..len]).unwrap();
+            match w.write_all(&buffer[..len]) {
+                Ok(_) => (),
+                Err(err) => {
+                    utils::print_error(err.to_string());
+                    std::process::exit(0);
+                }
+            };
             w.flush().unwrap();
         }
     })
 }
 
 /* Listen on given host and port */
-pub fn listen(opts: &options::Opts) -> std::io::Result<()> {
+pub fn listen(opts: &utils::Opts) -> std::io::Result<()> {
     match opts.transport {
-        options::Protocol::Tcp => {
+        utils::Protocol::Tcp => {
             let listener = std::net::TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
             print_started_listen(opts);
 
             let (mut stream, _) = listener.accept()?;
             match opts.mode {
-                options::Mode::Normal => {
+                utils::Mode::Normal => {
                     let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
                     let t2 = pipe_thread(stream, std::io::stdout());
                     t1.join().unwrap();
                     t2.join().unwrap();
                 }
-                options::Mode::History => {
+                utils::Mode::History => {
                     // For command line history there is a better way of doing it, atleast for unix
                     // You write a custom function that does the same as "stty cbreak -echo"
                     // It disables automatic printing of characters when you press up arrow, and disables line buffering
@@ -82,7 +95,7 @@ pub fn listen(opts: &options::Opts) -> std::io::Result<()> {
             }
         }
 
-        options::Protocol::Udp => {
+        utils::Protocol::Udp => {
             // Can be made better probably...
             // Rustline is needed here because else you cant delete characters
             let socket = std::net::UdpSocket::bind(format!("{}:{}", opts.host, opts.port))?;

@@ -3,19 +3,14 @@
 // Licence: MIT
 //
 
-use colored::Colorize;
 use structopt::StructOpt;
 
 mod input;
 mod listener;
-mod options;
+mod utils;
 
 #[cfg(unix)]
 mod unixshell;
-
-fn print_error(err: String) {
-    eprintln!("{} {}", "rc:".red(), err);
-}
 
 fn main() {
     let opts = input::Opts::from_args();
@@ -25,7 +20,7 @@ fn main() {
     } else if opts.host.len() == 2 {
         (opts.host[0].to_string(), opts.host[1].to_string())
     } else {
-        print_error("Missing port number".to_string());
+        utils::print_error("Missing port number".to_string());
         return;
     };
 
@@ -33,35 +28,35 @@ fn main() {
     if opts.rshell != None {
         // Block usage on windows
         if cfg!(windows) {
-            print_error("Reverse shells is currently not supported for windows".to_string());
+            utils::print_error("Reverse shells is currently not supported for windows".to_string());
             return;
         }
 
         #[cfg(unix)]
         if let Err(err) = unixshell::shell(opt_host, opt_port, opts.rshell.unwrap()) {
-            print_error(err.to_string());
+            utils::print_error(err.to_string());
         }
         return;
     }
     // Listen mode
     else if opts.listen_mode {
-        let opts = options::Opts {
+        let opts = utils::Opts {
             host: opt_host,
             port: opt_port,
             transport: if opts.udp_mode {
-                options::Protocol::Udp
+                utils::Protocol::Udp
             } else {
-                options::Protocol::Tcp
+                utils::Protocol::Tcp
             },
             mode: if opts.history {
-                options::Mode::History
+                utils::Mode::History
             } else {
-                options::Mode::Normal
+                utils::Mode::Normal
             },
         };
 
         if let Err(err) = listener::listen(&opts) {
-            print_error(err.to_string());
+            utils::print_error(err.to_string());
             return;
         };
     }
