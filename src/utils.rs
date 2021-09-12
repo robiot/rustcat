@@ -24,6 +24,6 @@ pub enum Mode {
 }
 
 /* Public Functions */
-pub fn print_error(err: String) {
-    eprintln!("{} {}", "rc:".red(), err);
+pub fn print_error<T: std::string::ToString>(err: T) {
+    eprintln!("{} {}", "rc:".red(), err.to_string());
 }
