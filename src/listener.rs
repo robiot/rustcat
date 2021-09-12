@@ -26,7 +26,7 @@ where
             let len = match r.read(&mut buffer) {
                 Ok(t) => t,
                 Err(err) => {
-                    utils::print_error(err.to_string());
+                    utils::print_error(err);
                     std::process::exit(0);
                 }
             };
@@ -37,7 +37,7 @@ where
             match w.write_all(&buffer[..len]) {
                 Ok(_) => (),
                 Err(err) => {
-                    utils::print_error(err.to_string());
+                    utils::print_error(err);
                     std::process::exit(0);
                 }
             };
@@ -85,7 +85,7 @@ pub fn listen(opts: &utils::Opts) -> std::io::Result<()> {
                                 break;
                             }
                             Err(err) => {
-                                println!("Error: {:?}", err.to_string());
+                                utils::print_error(err);
                                 break;
                             }
                         }
@@ -132,7 +132,7 @@ pub fn listen(opts: &utils::Opts) -> std::io::Result<()> {
                             break;
                         }
                         Err(err) => {
-                            println!("Error: {:?}", err);
+                            utils::print_error(err);
                             break;
                         }
                     }
