@@ -34,7 +34,7 @@
 
 [//]: # (This is for later)
 [barch_lnk]: https://www.blackarch.org/tools.html
-[barch_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/barch.png
+[barch_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/blackarch.png
 <hr>
 
 # 🤔 What Is Rustcat?
