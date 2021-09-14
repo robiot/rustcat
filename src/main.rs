@@ -34,7 +34,12 @@ fn main() {
 
         #[cfg(unix)]
         if let Err(err) = unixshell::shell(opt_host, opt_port, opts.rshell.unwrap()) {
-            utils::print_error(err);
+            //utils::print_error(err);
+            println!("{:?}", err.kind());
+
+            //ConnectionRefused
+            //InvalidInput
+            //NotFound
         }
         return;
     }
@@ -57,7 +62,29 @@ fn main() {
 
         if let Err(err) = listener::listen(&opts) {
             utils::print_error(err);
+            //println!("{:?}", err.kind());
+
+            // InvalidInput
+            // PermissionDenied
             return;
         };
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    #[cfg(unix)]
+    use super::unixshell;
+
+    // Panics if InvalidInput Not returned
+    #[test]
+    #[cfg(unix)]
+    fn revshell_bad_port() {
+        assert_eq!(
+            unixshell::shell("0.0.0.0".to_string(), "420692223".to_string(), "bash".to_string())
+                .map_err(|e| e.kind()),
+            Err(std::io::ErrorKind::InvalidInput)
+        )
     }
 }
