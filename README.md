@@ -12,17 +12,22 @@
   <hr>
 </div>
 
-| **[Cargo][cargo_lnk]**       | **[Arch Linux][arch_lnk]**   | **[Debian/Kali][kali_lnk]**            | **[Other][other_lnk]**                       |
-|:----------------------------:|:----------------------------:|:--------------------------------------:|:--------------------------------------------:|
-| [![cargo_img]][cargo_lnk]    | [![arch_img]][arch_lnk]      | [![kali_img]][kali_lnk]                | [![other_img]][other_lnk]                    |
-| `cargo install rustcat`      | `yay -S rustcat`             | [Read the install guide][debian_guide] | [Read the install guide][other_guide]        |
-
+| **[Cargo][cargo_lnk]**                | **[Arch Linux][arch_lnk]**            | **[Black Arch][barch_lnk]**           | **[Debian/Kali][kali_lnk]**
+|:-------------------------------------:|:-------------------------------------:|:-------------------------------------:|:-------------------------------------:|
+| [![cargo_img]][cargo_lnk]             | [![arch_img]][arch_lnk]               | [![barch_img]][barch_lnk]             | [![kali_img]][kali_lnk]               |
+| `cargo install rustcat`               | `yay -S rustcat`                      | `pacman -S rustcat`                   | [Read the install guide][debian_guide]|
+| **[Other][other_lnk]**                |                                       |                                       |                                       |
+| [![other_img]][other_lnk]             |                                       |                                       |                                       |
+| [Read the install guide][other_guide] |                                       |                                       |                                       |
 
 [cargo_lnk]: https://crates.io/crates/rustcat
 [cargo_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/cargo.png
 
 [arch_lnk]: https://aur.archlinux.org/packages/rustcat/
 [arch_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/arch.png
+
+[barch_lnk]: https://www.blackarch.org/tools.html
+[barch_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/blackarch.png
 
 [kali_lnk]: https://github.com/robiot/rustcat
 [kali_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/kali.png
@@ -31,10 +36,6 @@
 [other_lnk]: https://github.com/robiot/rustcat
 [other_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/others.png
 [other_guide]: https://github.com/robiot/rustcat/wiki/Installation-Guide
-
-[//]: # (This is for later)
-[barch_lnk]: https://www.blackarch.org/tools.html
-[barch_img]: https://raw.githubusercontent.com/robiot/rustcat/main/img/icons/blackarch.png
 <hr>
 
 # 🤔 What Is Rustcat?
