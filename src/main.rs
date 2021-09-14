@@ -34,8 +34,8 @@ fn main() {
 
         #[cfg(unix)]
         if let Err(err) = unixshell::shell(opt_host, opt_port, opts.rshell.unwrap()) {
-            //utils::print_error(err);
-            println!("{:?}", err.kind());
+            utils::print_error(err);
+            //println!("{:?}", err.kind());
 
             //ConnectionRefused
             //InvalidInput
@@ -43,6 +43,7 @@ fn main() {
         }
         return;
     }
+    
     // Listen mode
     else if opts.listen_mode {
         let opts = utils::Opts {
