@@ -45,7 +45,7 @@
 
 # ✨ Features
 * Listen on ports
-* Command history
+* Command history & Command completion
 * Reverse shell
 * Udp
 * Colors
@@ -64,12 +64,17 @@ And creating a reverse shell has never been easier, `rc host port -r shell` is a
 
 Command history is something we all need. How annoying isn't it when you accidently type a long command wrong, then you have to rewrite the entire thing.
 
-But Rustcat fixes that with command history. Just add -H and you will get command history (`rc -lHp port`) and command completion, unlike netcat where you have to use another application and do `rlwrap -cAr nc -nlvp port`.
+But Rustcat fixes that with command history. Just add -H and you will get command history (`rc -lHp port`) and command completion, unlike netcat where you have to use another application and do `rlwrap -cAr nc -nlvp port` to get the same results.
+
+When adding -H, the shell will almost work like a ssh shell.
 
 ## 🎨 Appearance
 A little splash of color doesn't hurt :).
 
-# 📖 Full Installation Guide
+## 🌀 Cross Platform
+Rustcat supports unix and windows systems.
+
+# 📖 Installation Guide
 You can find the guide [here](https://github.com/robiot/rustcat/wiki/Installation-Guide)
 
 # 💡 Usage
