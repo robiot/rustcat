@@ -12,7 +12,7 @@
   <hr>
 </div>
 
-| **[Cargo][cargo_lnk]**                | **[Arch Linux][arch_lnk]**            | **[Black Arch][barch_lnk]**           | **[Debian/Kali][kali_lnk]**
+| **[Cargo][cargo_lnk]**                | **[Arch Linux][arch_lnk]**            | **[BlackArch][barch_lnk]**           | **[Debian/Kali][kali_lnk]**
 |:-------------------------------------:|:-------------------------------------:|:-------------------------------------:|:-------------------------------------:|
 | [![cargo_img]][cargo_lnk]             | [![arch_img]][arch_lnk]               | [![barch_img]][barch_lnk]             | [![kali_img]][kali_lnk]               |
 | `cargo install rustcat`               | `yay -S rustcat`                      | `pacman -S rustcat`                   | [Read the install guide][debian_guide]|
