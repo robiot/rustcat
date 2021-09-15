@@ -3,13 +3,14 @@ Name: listener.rs
 Description: Listens on given arguments.
 */
 
+use super::utils;
 use colored::Colorize;
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
 use std::io::{self, Write};
 
-use super::utils;
-
+#[cfg(unix)]
+mod termios_handler;
 
 fn print_started_listen(opts: &utils::Opts) {
     println!("Listening on {}:{}", opts.host.green(), opts.port.cyan());
@@ -46,6 +47,14 @@ where
     })
 }
 
+fn listen_tcp_normal(stream: std::net::TcpStream) -> std::io::Result<()> {
+    let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
+    let t2 = pipe_thread(stream, std::io::stdout());
+    t1.join().unwrap();
+    t2.join().unwrap();
+    Ok(())
+}
+
 /* Listen on given host and port */
 pub fn listen(opts: &utils::Opts) -> std::io::Result<()> {
     match opts.transport {
@@ -55,43 +64,42 @@ pub fn listen(opts: &utils::Opts) -> std::io::Result<()> {
 
             let (mut stream, _) = listener.accept()?;
             match opts.mode {
-                utils::Mode::Normal => {
-                    let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
-                    let t2 = pipe_thread(stream, std::io::stdout());
-                    t1.join().unwrap();
-                    t2.join().unwrap();
-                }
                 utils::Mode::History => {
-                    // For command line history there is a better way of doing it, atleast for unix
-                    // You write a custom function that does the same as "stty cbreak -echo"
-                    // It disables automatic printing of characters when you press up arrow, and disables line buffering
-
-                    let t = pipe_thread(stream.try_clone().unwrap(), std::io::stdout());
-                    let mut rl = Editor::<()>::new();
-                    loop {
-                        let readline = rl.readline(">> "); // &buffer[..len] ?
-                        match readline {
-                            Ok(command) => {
-                                rl.add_history_entry(command.as_str());
-                                let command = command.clone() + "\n";
-                                stream
-                                    .write_all(command.as_bytes())
-                                    .expect("Faild to send TCP.");
-                            }
-                            Err(ReadlineError::Interrupted) => {
-                                break;
-                            }
-                            Err(ReadlineError::Eof) => {
-                                break;
-                            }
-                            Err(err) => {
-                                utils::print_error(err);
-                                break;
+                    if cfg!(unix) {
+                        #[cfg(unix)]
+                        termios_handler::setup_fd()?;
+                        listen_tcp_normal(stream)?;
+                    } else {
+                        let t = pipe_thread(stream.try_clone().unwrap(), std::io::stdout());
+                        let mut rl = Editor::<()>::new();
+                        loop {
+                            let readline = rl.readline(">> "); // &buffer[..len] ?
+                            match readline {
+                                Ok(command) => {
+                                    rl.add_history_entry(command.as_str());
+                                    let command = command.clone() + "\n";
+                                    stream
+                                        .write_all(command.as_bytes())
+                                        .expect("Faild to send TCP.");
+                                }
+                                Err(ReadlineError::Interrupted) => {
+                                    break;
+                                }
+                                Err(ReadlineError::Eof) => {
+                                    break;
+                                }
+                                Err(err) => {
+                                    utils::print_error(err);
+                                    break;
+                                }
                             }
                         }
+                        t.join().unwrap();
                     }
-                    t.join().unwrap();
                 }
+                utils::Mode::Normal => {
+                    listen_tcp_normal(stream)?;
+                },
             }
         }
 
