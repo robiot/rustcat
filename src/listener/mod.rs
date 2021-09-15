@@ -73,7 +73,7 @@ pub fn listen(opts: &utils::Opts) -> std::io::Result<()> {
                         let t = pipe_thread(stream.try_clone().unwrap(), std::io::stdout());
                         let mut rl = Editor::<()>::new();
                         loop {
-                            let readline = rl.readline(">> "); // &buffer[..len] ?
+                            let readline = rl.readline(">> ");
                             match readline {
                                 Ok(command) => {
                                     rl.add_history_entry(command.as_str());
