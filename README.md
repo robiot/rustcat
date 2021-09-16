@@ -45,7 +45,7 @@
 
 # ✨ Features
 * Listen on ports
-* Command history & Command completion
+* Command history & Tab completion
 * Reverse shell
 * Udp
 * Colors
