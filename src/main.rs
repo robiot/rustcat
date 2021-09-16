@@ -35,11 +35,6 @@ fn main() {
         #[cfg(unix)]
         if let Err(err) = unixshell::shell(opt_host, opt_port, opts.rshell.unwrap()) {
             utils::print_error(err);
-            //println!("{:?}", err.kind());
-
-            //ConnectionRefused
-            //InvalidInput
-            //NotFound
         }
         return;
     }
@@ -63,10 +58,6 @@ fn main() {
 
         if let Err(err) = listener::listen(&opts) {
             utils::print_error(err);
-            //println!("{:?}", err.kind());
-
-            // InvalidInput
-            // PermissionDenied
             return;
         };
     }
