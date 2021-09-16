@@ -1,3 +1,8 @@
+/*
+Name: termios_handler.rs
+Description: Set termios flags for unix command history.
+*/
+
 use std::fs::OpenOptions;
 use std::os::unix::io::AsRawFd;
 use termios::*;
