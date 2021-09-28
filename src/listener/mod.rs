@@ -50,6 +50,7 @@ where
 fn listen_tcp_normal(stream: std::net::TcpStream) -> std::io::Result<()> {
     let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
     let t2 = pipe_thread(stream, std::io::stdout());
+    println!("Connection Recived");
     t1.join().unwrap();
     t2.join().unwrap();
     Ok(())
