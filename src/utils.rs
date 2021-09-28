@@ -9,6 +9,7 @@ use colored::Colorize;
 pub struct Opts {
     pub host: String,
     pub port: String,
+    pub exec: Option<String>,
     pub transport: Protocol,
     pub mode: Mode,
 }
@@ -21,6 +22,7 @@ pub enum Protocol {
 pub enum Mode {
     Normal,
     History,
+    LocalHistory
 }
 
 /* Public Functions */

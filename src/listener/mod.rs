@@ -16,6 +16,10 @@ fn print_started_listen(opts: &utils::Opts) {
     println!("Listening on {}:{}", opts.host.green(), opts.port.cyan());
 }
 
+fn print_connection_recieved() {
+    println!("{} Connection Recived", "[+]".green());
+}
+
 fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>
 where
     R: std::io::Read + Send + 'static,
@@ -23,6 +27,7 @@ where
 {
     std::thread::spawn(move || {
         let mut buffer = [0; 1024];
+        //w.write_all("echo test\n".as_bytes()).unwrap();>
         loop {
             let len = match r.read(&mut buffer) {
                 Ok(t) => t,
@@ -47,10 +52,15 @@ where
     })
 }
 
-fn listen_tcp_normal(stream: std::net::TcpStream) -> std::io::Result<()> {
+fn listen_tcp_normal(stream: std::net::TcpStream, opts: &utils::Opts) -> std::io::Result<()> {
+    if opts.exec != None {
+        stream
+            .try_clone()?
+            .write_all(format!("{}\n", opts.exec.as_ref().unwrap()).as_bytes())?;
+    }
     let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
     let t2 = pipe_thread(stream, std::io::stdout());
-    println!("Connection Recived");
+    print_connection_recieved();
     t1.join().unwrap();
     t2.join().unwrap();
     Ok(())
@@ -69,38 +79,42 @@ pub fn listen(opts: &utils::Opts) -> std::io::Result<()> {
                     if cfg!(unix) {
                         #[cfg(unix)]
                         termios_handler::setup_fd()?;
-                        listen_tcp_normal(stream)?;
+                        listen_tcp_normal(stream, opts)?;
                     } else {
-                        let t = pipe_thread(stream.try_clone().unwrap(), std::io::stdout());
-                        let mut rl = Editor::<()>::new();
-                        loop {
-                            let readline = rl.readline(">> ");
-                            match readline {
-                                Ok(command) => {
-                                    rl.add_history_entry(command.as_str());
-                                    let command = command.clone() + "\n";
-                                    stream
-                                        .write_all(command.as_bytes())
-                                        .expect("Faild to send TCP.");
-                                }
-                                Err(ReadlineError::Interrupted) => {
-                                    break;
-                                }
-                                Err(ReadlineError::Eof) => {
-                                    break;
-                                }
-                                Err(err) => {
-                                    utils::print_error(err);
-                                    break;
-                                }
-                            }
-                        }
-                        t.join().unwrap();
+                        utils::print_error("Normal history is not supported on your platform");
                     }
                 }
+                utils::Mode::LocalHistory => {
+                    let t = pipe_thread(stream.try_clone().unwrap(), std::io::stdout());
+                    let mut rl = Editor::<()>::new();
+                    print_connection_recieved();
+                    loop {
+                        let readline = rl.readline(">> ");
+                        match readline {
+                            Ok(command) => {
+                                rl.add_history_entry(command.as_str());
+                                let command = command.clone() + "\n";
+                                stream
+                                    .write_all(command.as_bytes())
+                                    .expect("Faild to send TCP.");
+                            }
+                            Err(ReadlineError::Interrupted) => {
+                                break;
+                            }
+                            Err(ReadlineError::Eof) => {
+                                break;
+                            }
+                            Err(err) => {
+                                utils::print_error(err);
+                                break;
+                            }
+                        }
+                    }
+                    t.join().unwrap();
+                }
                 utils::Mode::Normal => {
-                    listen_tcp_normal(stream)?;
-                },
+                    listen_tcp_normal(stream, opts)?;
+                }
             }
         }
 
@@ -135,14 +149,14 @@ pub fn listen(opts: &utils::Opts) -> std::io::Result<()> {
                             }
                         }
                         Err(ReadlineError::Interrupted) => {
-                            break;
+                            std::process::exit(0);
                         }
                         Err(ReadlineError::Eof) => {
-                            break;
+                            std::process::exit(0);
                         }
                         Err(err) => {
                             utils::print_error(err);
-                            break;
+                            std::process::exit(0);
                         }
                     }
                 }
