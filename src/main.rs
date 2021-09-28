@@ -41,9 +41,11 @@ fn main() {
     
     // Listen mode
     else if opts.listen_mode {
+
         let opts = utils::Opts {
             host: opt_host,
             port: opt_port,
+            exec: opts.exec,
             transport: if opts.udp_mode {
                 utils::Protocol::Udp
             } else {
@@ -51,7 +53,10 @@ fn main() {
             },
             mode: if opts.history {
                 utils::Mode::History
-            } else {
+            } else if opts.local_history {
+                utils::Mode::LocalHistory
+            } 
+            else {
                 utils::Mode::Normal
             },
         };
