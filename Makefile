@@ -1,7 +1,7 @@
 #Makefile to create release files
 RELEASE_PATH = "pkg-env/release"
 RELEASE_VERSION := ${shell cargo pkgid | cut -d# -f2 | cut -d: -f2}
-BIN_NAME = "rc"
+BIN_NAME = "rcat"
 
 .PHONY: install
 install:
