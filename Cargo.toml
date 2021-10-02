@@ -1,6 +1,6 @@
 [package]
 name = "rustcat"
-version = "1.3.0"
+version = "2.0.0"
 authors = ["robiot"]
 description = "rustcat - The Modern Port Listener & Reverse Shell"
 license = "MIT"
@@ -8,7 +8,7 @@ repository = "https://github.com/robiot/rustcat"
 edition = "2018"
 
 [[bin]]
-name = "rc"
+name = "rcat"
 path = "src/main.rs"
 
 [dependencies]
