@@ -15,7 +15,7 @@ main(){
     sudo rm -rf /tmp/${name} && curl -OL https://github.com/robiot/rustcat/releases/latest/download/${name} && sudo apt install ./${name}
 
     if [ $? -eq 0 ]; then
-        echo "Rustcat $version sucessfully installed! | Run with 'rc"
+        echo "Rustcat $version sucessfully installed! | Run with 'rcat"
     else
         echo "Failed to install"
     fi
