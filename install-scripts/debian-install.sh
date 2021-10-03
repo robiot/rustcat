@@ -12,7 +12,7 @@ main(){
     echo "Found $name"
 
     cd /tmp
-    sudo rm -rf /tmp/${name} && curl -OL https://github.com/robiot/rustcat/releases/latest/download/${name} && sudo apt install ./${name}
+    sudo rm -rf ./${name} && curl -OL https://github.com/robiot/rustcat/releases/latest/download/${name} && sudo apt install ./${name} && sudo rm -rf ./${name}
 
     if [ $? -eq 0 ]; then
         echo "Rustcat $version sucessfully installed! | Run with 'rcat"
