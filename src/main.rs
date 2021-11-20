@@ -1,7 +1,5 @@
-//
-// Rustcat (rc)
-// Licence: MIT
-//
+//! Rustcat (rc)
+//! Licence: MIT
 
 use structopt::StructOpt;
 
