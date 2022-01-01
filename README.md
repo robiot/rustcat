@@ -1,45 +1,15 @@
-# rustcat - A modern port listener and reverse shell.
+rustcat - the modern port listener and reverse shell ![Workflow status](https://github.com/robiot/rustcat/actions/workflows/rust.yml/badge.svg)
+=================================================================================
 
-<div>
-  <img alt="Contributors" src="https://img.shields.io/github/contributors/robiot/rustcat?label=Contributors">
-  <img alt="AUR version" src="https://img.shields.io/aur/version/rustcat">
-  <img alt="Crates.io" src="https://img.shields.io/crates/d/rustcat?label=Cargo%20Downloads">
-  <img alt="GitHub All Releases" src="https://img.shields.io/github/downloads/robiot/rustcat/total?label=GitHub%20Downloads">
-  <img alt="Build Stats" src="https://github.com/robiot/rustcat/actions/workflows/rust.yml/badge.svg">
-</div>
+rust is a port listener and reverse for macOS, Linux, and windows. It is inspired by netcat, but is only for reverse shells and with some extra features.
 
-[Installation](https://github.com/robiot/rustcat#installation-guide) • [Usage](https://github.com/robiot/rustcat/wiki/Basic-Usage)
-
-# Features
-* Listen on ports
-* Command history & Tab completion
-* Reverse shell
-* Udp
-* Colors
-
-# Why Rustcat?
-
-## Everything Easy
-![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/img/easy-revshell.gif)
-
-Starting a listener is just as simple as `rcat -lp port`. While in netcat you would do something like `nc -nlvp port` to get the same results.
-
-And creating a reverse shell has never been easier, `rcat host port -r shell` is all you need. No more long /dev/tcp stuff that you always forget.
-
-## Command History
-![Ex](https://raw.githubusercontent.com/robiot/rustcat/main/img/history.gif)
-
-Command history is something we all need. How annoying isn't it when you accidently type a long command wrong, then you have to rewrite the entire thing.
-
-But Rustcat fixes that with command history. Just add -H and you will get command history (`rcat -lHp port`) and command completion, unlike netcat where you have to use another application and do `rlwrap -cAr nc -nlvp port` to get the same results.
-
-When adding -H, the shell will almost work like a ssh shell.
-
-## Appearance
-A little splash of color doesn't hurt :).
-
-## Cross Platform
-Rustcat supports unix and windows systems.
+## Main features
+* Listen on ports;
+* Command history & Tab completion;
+* Reverse shell;
+* Udp;
+* Colors;
+* Everything easy;
 
 ## Installation
 
