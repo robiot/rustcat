@@ -139,8 +139,8 @@ pub fn listen(opts: &utils::Opts) -> Result<()> {
 /* readline_decorator takes in a function, A mutable closure
  * which will perform the sending of data depending on the transport protocol. */
 fn readline_decorator(mut f: impl FnMut(String)) -> Result<()> {
+    let mut rl = Editor::<()>::new();
     loop {
-        let mut rl = Editor::<()>::new();
         match rl.readline(">> ") {
             Ok(command) => {
                 rl.add_history_entry(command.clone().as_str());
