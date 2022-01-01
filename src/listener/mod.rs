@@ -3,11 +3,14 @@ Name: listener.rs
 Description: Listens on given arguments.
 */
 
-use super::utils;
+use super::utils::{self, print_error, Mode};
 use colored::Colorize;
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
-use std::io::{self, Write};
+use std::io::{stdin, stdout, Read, Result, Write};
+use std::net::{SocketAddr, TcpListener, TcpStream, UdpSocket};
+use std::process::exit;
+use std::thread::{self, JoinHandle};
 
 #[cfg(unix)]
 mod termios_handler;
@@ -20,46 +23,47 @@ fn print_connection_recieved() {
     println!("{} Connection Recived", "[+]".green());
 }
 
-fn pipe_thread<R, W>(mut r: R, mut w: W) -> std::thread::JoinHandle<()>
+fn pipe_thread<R, W>(mut r: R, mut w: W) -> JoinHandle<()>
 where
-    R: std::io::Read + Send + 'static,
-    W: std::io::Write + Send + 'static,
+    R: Read + Send + 'static,
+    W: Write + Send + 'static,
 {
-    std::thread::spawn(move || {
+    thread::spawn(move || {
         let mut buffer = [0; 1024];
         //w.write_all("echo test\n".as_bytes()).unwrap();>
         loop {
-            let len = match r.read(&mut buffer) {
-                Ok(t) => t,
-                Err(err) => {
-                    utils::print_error(err);
-                    std::process::exit(0);
+            match r.read(&mut buffer) {
+                Ok(0) => {
+                    println!("\n{} Connection lost", "[-]".red());
+                    exit(0);
                 }
-            };
-            if len == 0 {
-                println!("\n{} Connection lost", "[-]".red());
-                std::process::exit(0);
+                Ok(len) => {
+                    if let Err(err) = w.write_all(&buffer[..len]) {
+                        exit(print_error(err));
+                    }
+                }
+                Err(err) => exit(print_error(err)),
             }
-            match w.write_all(&buffer[..len]) {
-                Ok(_) => (),
-                Err(err) => {
-                    utils::print_error(err);
-                    std::process::exit(0);
-                }
-            };
             w.flush().unwrap();
         }
     })
 }
 
-fn listen_tcp_normal(stream: std::net::TcpStream, opts: &utils::Opts) -> std::io::Result<()> {
-    if opts.exec != None {
+fn listen_tcp_normal(stream: TcpStream, opts: &utils::Opts) -> Result<()> {
+    if let Some(exec) = &opts.exec {
         stream
             .try_clone()?
-            .write_all(format!("{}\n", opts.exec.as_ref().unwrap()).as_bytes())?;
+            .write_all(format!("{}\n", exec).as_bytes())?;
     }
-    let t1 = pipe_thread(std::io::stdin(), stream.try_clone()?);
-    let t2 = pipe_thread(stream, std::io::stdout());
+    /*
+    Using tuple assignment
+    since t1 and t2 share the same type
+    and are related identifiers
+    */
+    let (t1, t2) = (
+        pipe_thread(stdin(), stream.try_clone()?),
+        pipe_thread(stream, stdout()),
+    );
     print_connection_recieved();
     t1.join().unwrap();
     t2.join().unwrap();
@@ -67,52 +71,33 @@ fn listen_tcp_normal(stream: std::net::TcpStream, opts: &utils::Opts) -> std::io
 }
 
 /* Listen on given host and port */
-pub fn listen(opts: &utils::Opts) -> std::io::Result<()> {
+pub fn listen(opts: &utils::Opts) -> Result<()> {
     match opts.transport {
         utils::Protocol::Tcp => {
-            let listener = std::net::TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
+            let listener = TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
             print_started_listen(opts);
 
             let (mut stream, _) = listener.accept()?;
-            match opts.mode {
-                utils::Mode::History => {
-                    if cfg!(unix) {
-                        #[cfg(unix)]
+            match &opts.mode {
+                Mode::History => {
+                    #[cfg(unix)]
+                    {
                         termios_handler::setup_fd()?;
                         listen_tcp_normal(stream, opts)?;
-                    } else {
-                        utils::print_error("Normal history is not supported on your platform");
                     }
+                    print_error("Normal history is not supported on your platform");
                 }
-                utils::Mode::LocalHistory => {
-                    let t = pipe_thread(stream.try_clone().unwrap(), std::io::stdout());
-                    let mut rl = Editor::<()>::new();
+                Mode::LocalHistory => {
+                    let t = pipe_thread(stream.try_clone()?, stdout());
                     print_connection_recieved();
-                    loop {
-                        let readline = rl.readline(">> ");
-                        match readline {
-                            Ok(command) => {
-                                rl.add_history_entry(command.as_str());
-                                let command = command.clone() + "\n";
-                                stream
-                                    .write_all(command.as_bytes())
-                                    .expect("Faild to send TCP.");
-                            }
-                            Err(ReadlineError::Interrupted) => {
-                                break;
-                            }
-                            Err(ReadlineError::Eof) => {
-                                break;
-                            }
-                            Err(err) => {
-                                utils::print_error(err);
-                                break;
-                            }
-                        }
-                    }
+                    readline_decorator(|command| {
+                        stream
+                            .write_all((command + "\n").as_bytes())
+                            .expect("Failed to send TCP.");
+                    })?;
                     t.join().unwrap();
                 }
-                utils::Mode::Normal => {
+                Mode::Normal => {
                     listen_tcp_normal(stream, opts)?;
                 }
             }
@@ -120,48 +105,51 @@ pub fn listen(opts: &utils::Opts) -> std::io::Result<()> {
 
         utils::Protocol::Udp => {
             // Can be made better probably...
-            // Rustline is needed here because else you cant delete characters
-            let socket = std::net::UdpSocket::bind(format!("{}:{}", opts.host, opts.port))?;
+            // Rustline is needed here because otherwise you can't delete characters
+            let socket = UdpSocket::bind(format!("{}:{}", opts.host, opts.port))?;
+            let socket_clone = socket.try_clone()?;
+
             print_started_listen(opts);
+
             use std::sync::{Arc, Mutex};
-            let addr: Arc<Mutex<Option<std::net::SocketAddr>>> = Arc::from(Mutex::new(None));
+            let addr: Arc<Mutex<Option<SocketAddr>>> = Arc::from(Mutex::new(None));
             let addr_clone = addr.clone();
-            let socket_clone = socket.try_clone().unwrap();
+
             std::thread::spawn(move || loop {
                 let mut buffer = [0; 1024];
-                let (len, src_addr) = socket_clone.recv_from(&mut buffer).unwrap();
-                *addr_clone.lock().unwrap() = Some(src_addr);
-
-                io::stdout().write_all(&buffer[..len]).unwrap();
-                io::stdout().flush().unwrap();
-            });
-            loop {
-                let mut rl = Editor::<()>::new();
-                loop {
-                    let readline = rl.readline(">> ");
-                    match readline {
-                        Ok(command) => {
-                            rl.add_history_entry(command.as_str());
-                            let command = command.clone() + "\n";
-                            let addr_option = *addr.lock().unwrap();
-                            if let Some(addr) = addr_option {
-                                socket.send_to(command.as_bytes(), addr)?;
-                            }
-                        }
-                        Err(ReadlineError::Interrupted) => {
-                            std::process::exit(0);
-                        }
-                        Err(ReadlineError::Eof) => {
-                            std::process::exit(0);
-                        }
-                        Err(err) => {
-                            utils::print_error(err);
-                            std::process::exit(0);
-                        }
-                    }
+                if let Ok((len, src_addr)) = socket_clone.recv_from(&mut buffer) {
+                    *addr_clone.lock().unwrap() = Some(src_addr);
+                    stdout().write_all(&buffer[..len]).unwrap();
+                    stdout().flush().unwrap();
                 }
+            });
+
+            loop {
+                readline_decorator(|command| {
+                    if let Some(addr) = *addr.lock().unwrap() {
+                        socket.send_to((command + "\n").as_bytes(), addr).unwrap();
+                    }
+                })?;
             }
         }
     }
-    return Ok(());
+    Ok(())
+}
+
+/* readline_decorator takes in a function, A mutable closure
+ * which will perform the sending of data depending on the transport protocol. */
+fn readline_decorator(mut f: impl FnMut(String)) -> Result<()> {
+    let mut rl = Editor::<()>::new();
+    loop {
+        match rl.readline(">> ") {
+            Ok(command) => {
+                rl.add_history_entry(command.clone().as_str());
+                f(command);
+            }
+            Err(err) => match err {
+                ReadlineError::Interrupted | ReadlineError::Eof => exit(0),
+                err => exit(utils::print_error(err)),
+            },
+        }
+    }
 }

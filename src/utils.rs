@@ -21,9 +21,10 @@ pub enum Protocol {
 pub enum Mode {
     Normal,
     History,
-    LocalHistory
+    LocalHistory,
 }
 
-pub fn print_error<T: std::string::ToString>(err: T) {
+pub fn print_error<T: std::string::ToString>(err: T) -> i32 {
     eprintln!("{} {}", "rc:".red(), err.to_string());
+    0
 }
