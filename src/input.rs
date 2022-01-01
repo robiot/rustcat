@@ -33,7 +33,7 @@ pub struct Opts {
     pub port: Option<String>,
 
     /// Reverse shell
-    #[structopt(short, long, value_name="shell")]
+    #[structopt(short, long, value_name = "shell")]
     pub rshell: Option<String>,
 
     // Host:ip
