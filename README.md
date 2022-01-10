@@ -4,7 +4,7 @@
 
 <img src="https://raw.githubusercontent.com/robiot/rustcat/main/img/example.png">
 
-Rustcat is an easy to use port listener and reverse shell for macOS, Linux, and windows.
+Rustcat is an easy to use port listener and reverse shell for Linux, MacOS, and Windows.
 
 ## Features
 - Listen on ports;
