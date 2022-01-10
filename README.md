@@ -2,7 +2,7 @@
       <h1>rustcat - The modern port listener and reverse shell </h1>
      </div>
 
-<img src="https://media.discordapp.net/attachments/857753170745491466/930095695560605716/unknown.png">
+<img src="https://raw.githubusercontent.com/robiot/rustcat/main/img/example.png">
 
 Rustcat is an easy to use port listener and reverse shell for macOS, Linux, and windows.
 
@@ -13,8 +13,6 @@ Rustcat is an easy to use port listener and reverse shell for macOS, Linux, and 
 - UDP mode;
 - Colors;
 - Everything easy;
-
-
 
 ## Usage
 A basic usage guide can be found [here](https://github.com/robiot/rustcat/wiki/Basic-Usage)
