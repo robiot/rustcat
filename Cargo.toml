@@ -18,3 +18,6 @@ rustyline = "9.0.0"
 
 [target.'cfg(unix)'.dependencies]
 termios = "0.3"
+
+[target.'cfg(windows)'.dependencies]
+winapi = "0.3.4"

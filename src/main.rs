@@ -13,6 +13,17 @@ use utils::print_error;
 mod unixshell;
 
 fn main() {
+
+    // Patch colors for Windows
+    #[cfg(windows)]
+    {
+        match utils::enable_ansi_support() {
+            Ok(_) => {}
+            Err(err) => {
+                print_error("Failed to enable ANSI color support");
+            }
+        }
+    }
     let opts = input::Opts::from_args();
 
     let (opt_host, opt_port) = if let Some(port) = opts.port {
