@@ -18,4 +18,4 @@ Rustcat is an easy to use port listener and reverse shell for Linux, MacOS, and 
 A basic usage guide can be found [here](https://github.com/robiot/rustcat/wiki/Basic-Usage)
 
 ## Installing
-Check out the [Installation Guide](https://github.com/robiot/XClicker/wiki/Installation)
+Check out the [Installation Guide](https://github.com/robiot/rustcat/wiki/Installation-Guide)
