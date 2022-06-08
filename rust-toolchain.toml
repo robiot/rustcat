@@ -1,0 +1,5 @@
+# Specify toolchain to use in rustup.
+# Without this file, compilation would fail if no prior toolchain
+# is installed (such as on a fresh ArchLinux+rustup installation)
+[toolchain]
+channel = "stable"
