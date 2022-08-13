@@ -1,6 +1,6 @@
 [package]
 name = "rustcat"
-version = "2.0.0"
+version = "2.1.0"
 authors = ["robiot"]
 description = "rustcat - The Modern Port Listener & Reverse Shell"
 license = "MIT"
@@ -18,3 +18,4 @@ rustyline = "10.0.0"
 
 [target.'cfg(unix)'.dependencies]
 termios = "0.3"
+signal-hook = "0.3.14"

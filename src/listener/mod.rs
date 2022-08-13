@@ -15,10 +15,14 @@ use std::thread::{self, JoinHandle};
 #[cfg(unix)]
 mod termios_handler;
 
+#[cfg(unix)]
+use signal_hook::{consts, iterator::Signals};
+
 pub struct Opts {
     pub host: String,
     pub port: String,
     pub exec: Option<String>,
+    pub block_signals: bool,
     pub mode: Mode,
 }
 
@@ -34,6 +38,12 @@ fn print_started_listen(opts: &Opts) {
 
 fn print_connection_recieved() {
     println!("{} Connection Recived", "[+]".green());
+}
+
+// It will complain on unix systems without this lint rule.
+#[allow(dead_code)]
+fn print_feature_not_supported() {
+    print_error("This feature is not supported on your platform");
 }
 
 fn pipe_thread<R, W>(mut r: R, mut w: W) -> JoinHandle<()>
@@ -94,6 +104,18 @@ fn listen_tcp_normal(stream: TcpStream, opts: &Opts) -> Result<()> {
 pub fn listen(opts: &Opts) -> rustyline::Result<()> {
     let listener = TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
 
+    if opts.block_signals {
+        #[cfg(unix)]
+        {
+            Signals::new(&[consts::SIGINT])?;
+        }
+
+        #[cfg(not(unix))]
+        {
+            print_feature_not_supported();
+        }
+    }
+
     print_started_listen(opts);
 
     let (mut stream, _) = listener.accept()?;
@@ -104,7 +126,11 @@ pub fn listen(opts: &Opts) -> rustyline::Result<()> {
                 termios_handler::setup_fd()?;
                 listen_tcp_normal(stream, opts)?;
             }
-            print_error("Normal history is not supported on your platform");
+
+            #[cfg(not(unix))]
+            {
+                print_feature_not_supported();
+            }
         }
         Mode::LocalInteractive => {
             let t = pipe_thread(stream.try_clone()?, stdout());
@@ -143,7 +169,7 @@ fn readline_decorator(mut f: impl FnMut(String)) -> rustyline::Result<()> {
                     print_error(err);
 
                     exit(1);
-                },
+                }
             },
         }
     }
