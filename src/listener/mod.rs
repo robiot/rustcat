@@ -3,7 +3,7 @@ Name: listener.rs
 Description: Listens on given arguments.
 */
 
-use super::utils::{self, print_error, Mode};
+use crate::utils::print_error;
 use colored::Colorize;
 use rustyline;
 use rustyline::error::ReadlineError;
@@ -15,7 +15,20 @@ use std::thread::{self, JoinHandle};
 #[cfg(unix)]
 mod termios_handler;
 
-fn print_started_listen(opts: &utils::Opts) {
+pub struct Opts {
+    pub host: String,
+    pub port: String,
+    pub exec: Option<String>,
+    pub mode: Mode,
+}
+
+pub enum Mode {
+    Normal,
+    Interactive,
+    LocalInteractive,
+}
+
+fn print_started_listen(opts: &Opts) {
     println!("Listening on {}:{}", opts.host.green(), opts.port.cyan());
 }
 
@@ -35,14 +48,21 @@ where
             match r.read(&mut buffer) {
                 Ok(0) => {
                     println!("\n{} Connection lost", "[-]".red());
+
                     exit(0);
                 }
                 Ok(len) => {
                     if let Err(err) = w.write_all(&buffer[..len]) {
-                        exit(print_error(err));
+                        print_error(err);
+
+                        exit(1);
                     }
                 }
-                Err(err) => exit(print_error(err)),
+                Err(err) => {
+                    print_error(err);
+
+                    exit(1);
+                }
             }
 
             w.flush().unwrap();
@@ -50,13 +70,12 @@ where
     })
 }
 
-fn listen_tcp_normal(stream: TcpStream, opts: &utils::Opts) -> Result<()> {
+fn listen_tcp_normal(stream: TcpStream, opts: &Opts) -> Result<()> {
     if let Some(exec) = &opts.exec {
         stream
             .try_clone()?
             .write_all(format!("{}\n", exec).as_bytes())?;
     }
-
 
     let (stdin_thread, stdout_thread) = (
         pipe_thread(stdin(), stream.try_clone()?),
@@ -72,13 +91,14 @@ fn listen_tcp_normal(stream: TcpStream, opts: &utils::Opts) -> Result<()> {
 }
 
 /* Listen on given host and port */
-pub fn listen(opts: &utils::Opts) -> rustyline::Result<()> {
+pub fn listen(opts: &Opts) -> rustyline::Result<()> {
     let listener = TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
+
     print_started_listen(opts);
 
     let (mut stream, _) = listener.accept()?;
     match &opts.mode {
-        Mode::History => {
+        Mode::Interactive => {
             #[cfg(unix)]
             {
                 termios_handler::setup_fd()?;
@@ -86,7 +106,7 @@ pub fn listen(opts: &utils::Opts) -> rustyline::Result<()> {
             }
             print_error("Normal history is not supported on your platform");
         }
-        Mode::LocalHistory => {
+        Mode::LocalInteractive => {
             let t = pipe_thread(stream.try_clone()?, stdout());
 
             print_connection_recieved();
@@ -119,7 +139,11 @@ fn readline_decorator(mut f: impl FnMut(String)) -> rustyline::Result<()> {
             }
             Err(err) => match err {
                 ReadlineError::Interrupted | ReadlineError::Eof => exit(0),
-                err => exit(utils::print_error(err)),
+                err => {
+                    print_error(err);
+
+                    exit(1);
+                },
             },
         }
     }
