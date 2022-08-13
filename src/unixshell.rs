@@ -26,5 +26,3 @@ pub fn shell(ip: String, port: String, shell: String) -> Result<()> {
 
     Ok(())
 }
-
-//todo add windows shell
