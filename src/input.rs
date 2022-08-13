@@ -26,6 +26,10 @@ pub enum Command {
         #[clap(short, long)]
         interactive: bool,
 
+        /// Block exit signals like CTRL-C
+        #[clap(short, long)]
+        block_signals: bool,
+
         /// Local interactive
         #[clap(short, long, conflicts_with = "interactive")]
         local_interactive: bool,
