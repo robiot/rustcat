@@ -1,9 +1,10 @@
 use clap::Parser;
+use fern::colors::{Color, ColoredLevelConfig};
 
 mod input;
 mod listener;
-mod utils;
-use utils::print_error;
+
+// use colored::Colorize;
 
 #[cfg(unix)]
 mod unixshell;
@@ -21,6 +22,30 @@ fn host_from_opts(host: Vec<String>) -> Result<(String, String), String> {
 }
 
 fn main() {
+    // Configure logger
+    if let Err(err) = fern::Dispatch::new()
+        .format(|out, message, record| {
+            let colors = ColoredLevelConfig::new()
+                .warn(Color::Yellow)
+                .info(Color::BrightGreen)
+                .error(Color::Red);
+
+            out.finish(format_args!(
+                "{}{} {}",
+                colors.color(record.level()).to_string().to_lowercase(), // Hardcoded red .red().bold()
+                ":",
+                message
+            ))
+        })
+        // .level(log::LevelFilter::Error) // For if verbose mode is implemented
+        .chain(std::io::stdout())
+        .apply()
+    {
+        println!("Failed to initialize logger: {}", { err });
+
+        return;
+    }
+
     let opts = input::Opts::parse();
 
     match opts.command {
@@ -34,7 +59,7 @@ fn main() {
             let (host, port) = match host_from_opts(host) {
                 Ok(value) => value,
                 Err(err) => {
-                    print_error(err);
+                    log::error!("{}", err);
 
                     return;
                 }
@@ -55,7 +80,7 @@ fn main() {
             };
 
             if let Err(err) = listener::listen(&opts) {
-                print_error(err);
+                log::error!("{}", err);
 
                 return;
             };
@@ -64,23 +89,23 @@ fn main() {
             let (host, port) = match host_from_opts(host) {
                 Ok(value) => value,
                 Err(err) => {
-                    print_error(err);
+                    log::error!("{}", err);
 
                     return;
                 }
             };
 
-            // Block usage on windows
-            #[cfg(windows)]
-            {
-                print_error("This feature is not supported for windows");
+            #[cfg(unix)]
+            if let Err(err) = unixshell::shell(host, port, shell) {
+                log::error!("{}", err);
 
                 return;
             }
 
-            #[cfg(unix)]
-            if let Err(err) = unixshell::shell(host, port, shell) {
-                print_error(err);
+            // Block usage on other operating systems
+            #[cfg(not(unix))]
+            {
+                log::error!("This feature is not supported on your platform");
 
                 return;
             }
