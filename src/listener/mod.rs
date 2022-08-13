@@ -8,7 +8,7 @@ use colored::Colorize;
 use rustyline;
 use rustyline::error::ReadlineError;
 use std::io::{stdin, stdout, Read, Result, Write};
-use std::net::{SocketAddr, TcpListener, TcpStream, UdpSocket};
+use std::net::{TcpListener, TcpStream};
 use std::process::exit;
 use std::thread::{self, JoinHandle};
 
@@ -30,7 +30,7 @@ where
 {
     thread::spawn(move || {
         let mut buffer = [0; 1024];
-        //w.write_all("echo test\n".as_bytes()).unwrap();>
+
         loop {
             match r.read(&mut buffer) {
                 Ok(0) => {
@@ -44,6 +44,7 @@ where
                 }
                 Err(err) => exit(print_error(err)),
             }
+
             w.flush().unwrap();
         }
     })
@@ -55,84 +56,53 @@ fn listen_tcp_normal(stream: TcpStream, opts: &utils::Opts) -> Result<()> {
             .try_clone()?
             .write_all(format!("{}\n", exec).as_bytes())?;
     }
-    /*
-    Using tuple assignment
-    since t1 and t2 share the same type
-    and are related identifiers
-    */
-    let (t1, t2) = (
+
+
+    let (stdin_thread, stdout_thread) = (
         pipe_thread(stdin(), stream.try_clone()?),
         pipe_thread(stream, stdout()),
     );
+
     print_connection_recieved();
-    t1.join().unwrap();
-    t2.join().unwrap();
+
+    stdin_thread.join().unwrap();
+    stdout_thread.join().unwrap();
+
     Ok(())
 }
 
 /* Listen on given host and port */
 pub fn listen(opts: &utils::Opts) -> rustyline::Result<()> {
-    match opts.transport {
-        utils::Protocol::Tcp => {
-            let listener = TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
-            print_started_listen(opts);
+    let listener = TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
+    print_started_listen(opts);
 
-            let (mut stream, _) = listener.accept()?;
-            match &opts.mode {
-                Mode::History => {
-                    #[cfg(unix)]
-                    {
-                        termios_handler::setup_fd()?;
-                        listen_tcp_normal(stream, opts)?;
-                    }
-                    print_error("Normal history is not supported on your platform");
-                }
-                Mode::LocalHistory => {
-                    let t = pipe_thread(stream.try_clone()?, stdout());
-                    print_connection_recieved();
-                    readline_decorator(|command| {
-                        stream
-                            .write_all((command + "\n").as_bytes())
-                            .expect("Failed to send TCP.");
-                    })?;
-                    t.join().unwrap();
-                }
-                Mode::Normal => {
-                    listen_tcp_normal(stream, opts)?;
-                }
+    let (mut stream, _) = listener.accept()?;
+    match &opts.mode {
+        Mode::History => {
+            #[cfg(unix)]
+            {
+                termios_handler::setup_fd()?;
+                listen_tcp_normal(stream, opts)?;
             }
+            print_error("Normal history is not supported on your platform");
         }
+        Mode::LocalHistory => {
+            let t = pipe_thread(stream.try_clone()?, stdout());
 
-        utils::Protocol::Udp => {
-            // Can be made better probably...
-            // Rustline is needed here because otherwise you can't delete characters
-            let socket = UdpSocket::bind(format!("{}:{}", opts.host, opts.port))?;
-            let socket_clone = socket.try_clone()?;
+            print_connection_recieved();
 
-            print_started_listen(opts);
-
-            use std::sync::{Arc, Mutex};
-            let addr: Arc<Mutex<Option<SocketAddr>>> = Arc::from(Mutex::new(None));
-            let addr_clone = addr.clone();
-
-            std::thread::spawn(move || loop {
-                let mut buffer = [0; 1024];
-                if let Ok((len, src_addr)) = socket_clone.recv_from(&mut buffer) {
-                    *addr_clone.lock().unwrap() = Some(src_addr);
-                    stdout().write_all(&buffer[..len]).unwrap();
-                    stdout().flush().unwrap();
-                }
-            });
-
-            loop {
-                readline_decorator(|command| {
-                    if let Some(addr) = *addr.lock().unwrap() {
-                        socket.send_to((command + "\n").as_bytes(), addr).unwrap();
-                    }
-                })?;
-            }
+            readline_decorator(|command| {
+                stream
+                    .write_all((command + "\n").as_bytes())
+                    .expect("Failed to send TCP.");
+            })?;
+            t.join().unwrap();
+        }
+        Mode::Normal => {
+            listen_tcp_normal(stream, opts)?;
         }
     }
+
     Ok(())
 }
 
