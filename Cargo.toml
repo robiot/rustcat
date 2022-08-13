@@ -5,7 +5,7 @@ authors = ["robiot"]
 description = "rustcat - The Modern Port Listener & Reverse Shell"
 license = "MIT"
 repository = "https://github.com/robiot/rustcat"
-edition = "2018"
+edition = "2021"
 
 [[bin]]
 name = "rcat"
@@ -14,7 +14,7 @@ path = "src/main.rs"
 [dependencies]
 structopt = "0.3.23"
 colored = "2.0.0"
-rustyline = "9.1.2"
+rustyline = "10.0.0"
 
 [target.'cfg(unix)'.dependencies]
 termios = "0.3"
