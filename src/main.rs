@@ -44,11 +44,6 @@ fn main() {
             host: opt_host,
             port: opt_port,
             exec: opts.exec,
-            transport: if opts.udp_mode {
-                utils::Protocol::Udp
-            } else {
-                utils::Protocol::Tcp
-            },
             mode: if opts.history {
                 utils::Mode::History
             } else if opts.local_history {
