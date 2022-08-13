@@ -3,7 +3,6 @@ use clap::Parser;
 mod input;
 mod listener;
 mod utils;
-
 use utils::print_error;
 
 #[cfg(unix)]
@@ -27,6 +26,7 @@ fn main() {
     match opts.command {
         input::Command::Listen {
             interactive,
+            block_signals,
             local_interactive,
             exec,
             host,
@@ -39,23 +39,26 @@ fn main() {
                     return;
                 }
             };
-                let opts = listener::Opts {
-                    host,
-                    port,
-                    exec,
-                    mode: if interactive {
-                        listener::Mode::Interactive
-                    } else if local_interactive {
-                        listener::Mode::LocalInteractive
-                    } else {
-                        listener::Mode::Normal
-                    },
-                };
 
-                if let Err(err) = listener::listen(&opts) {
-                    print_error(err);
-                    return;
-                };
+            let opts = listener::Opts {
+                host,
+                port,
+                exec,
+                block_signals,
+                mode: if interactive {
+                    listener::Mode::Interactive
+                } else if local_interactive {
+                    listener::Mode::LocalInteractive
+                } else {
+                    listener::Mode::Normal
+                },
+            };
+
+            if let Err(err) = listener::listen(&opts) {
+                print_error(err);
+
+                return;
+            };
         }
         input::Command::Connect { shell, host } => {
             let (host, port) = match host_from_opts(host) {
