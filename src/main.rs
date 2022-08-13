@@ -39,7 +39,6 @@ fn main() {
                     return;
                 }
             };
-
                 let opts = listener::Opts {
                     host,
                     port,
@@ -84,46 +83,6 @@ fn main() {
             }
         }
     }
-    // let (opt_host, opt_port) = if let Some(port) = opts.host {
-    //     ("0.0.0.0".to_string(), port)
-    // } else if let [host, port] = &opts.host[..] {
-    //     (host.to_string(), port.to_string())
-    // } else {
-    //     print_error("Missing port number");
-    //     return;
-    // };
-
-    // if let Some(rshell) = opts.rshell {
-    //     // Block usage on windows
-    //     #[cfg(windows)]
-    //     {
-    //         print_error("Reverse shells are currently not supported for windows");
-    //         return;
-    //     }
-    //     #[cfg(unix)]
-    //     if let Err(err) = unixshell::shell(opt_host, opt_port, rshell) {
-    //         print_error(err);
-    //         return;
-    //     }
-    // } else if opts.listen_mode {
-    //     let opts = utils::Opts {
-    //         host: opt_host,
-    //         port: opt_port,
-    //         exec: opts.exec,
-    //         mode: if opts.interactive {
-    //             utils::Mode::History
-    //         } else if opts.local_interactive {
-    //             utils::Mode::LocalHistory
-    //         } else {
-    //             utils::Mode::Normal
-    //         },
-    //     };
-
-    //     if let Err(err) = listener::listen(&opts) {
-    //         print_error(err);
-    //         return;
-    //     };
-    // }
 }
 
 #[cfg(test)]
