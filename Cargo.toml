@@ -2,8 +2,8 @@
 name = "rustcat"
 version = "2.1.0"
 authors = ["robiot"]
-description = "rustcat - The Modern Port Listener & Reverse Shell"
-license = "MIT"
+description = "The Modern Port Listener and Reverse Shell"
+license = "GPL-3.0"
 repository = "https://github.com/robiot/rustcat"
 edition = "2021"
 
@@ -12,9 +12,11 @@ name = "rcat"
 path = "src/main.rs"
 
 [dependencies]
-clap = {version = "3.2.17", features = ["derive"]}
+clap = { version = "3.2.17", features = ["derive"] }
 colored = "2.0.0"
 rustyline = "10.0.0"
+log = "0.4.17"
+fern = { version = "0.6.1", features = ["colored"] }
 
 [target.'cfg(unix)'.dependencies]
 termios = "0.3"

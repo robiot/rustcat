@@ -3,7 +3,6 @@ Name: listener.rs
 Description: Listens on given arguments.
 */
 
-use crate::utils::print_error;
 use colored::Colorize;
 use rustyline;
 use rustyline::error::ReadlineError;
@@ -32,18 +31,14 @@ pub enum Mode {
     LocalInteractive,
 }
 
-fn print_started_listen(opts: &Opts) {
-    println!("Listening on {}:{}", opts.host.green(), opts.port.cyan());
-}
-
 fn print_connection_recieved() {
-    println!("{} Connection Recived", "[+]".green());
+    log::info!("Connection Recived");
 }
 
 // It will complain on unix systems without this lint rule.
 #[allow(dead_code)]
 fn print_feature_not_supported() {
-    print_error("This feature is not supported on your platform");
+    log::error!("This feature is not supported on your platform");
 }
 
 fn pipe_thread<R, W>(mut r: R, mut w: W) -> JoinHandle<()>
@@ -57,19 +52,19 @@ where
         loop {
             match r.read(&mut buffer) {
                 Ok(0) => {
-                    println!("\n{} Connection lost", "[-]".red());
+                    log::warn!("Connection lost");
 
                     exit(0);
                 }
                 Ok(len) => {
                     if let Err(err) = w.write_all(&buffer[..len]) {
-                        print_error(err);
+                        log::error!("{}", err);
 
                         exit(1);
                     }
                 }
                 Err(err) => {
-                    print_error(err);
+                    log::error!("{}", err);
 
                     exit(1);
                 }
@@ -104,7 +99,7 @@ fn listen_tcp_normal(stream: TcpStream, opts: &Opts) -> Result<()> {
 pub fn listen(opts: &Opts) -> rustyline::Result<()> {
     let listener = TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
 
-    if opts.block_signals {
+    if opts.block_signals  {
         #[cfg(unix)]
         {
             Signals::new(&[consts::SIGINT])?;
@@ -116,7 +111,7 @@ pub fn listen(opts: &Opts) -> rustyline::Result<()> {
         }
     }
 
-    print_started_listen(opts);
+    log::info!("Listening on {}:{}", opts.host.green(), opts.port.cyan());
 
     let (mut stream, _) = listener.accept()?;
     match &opts.mode {
@@ -166,7 +161,7 @@ fn readline_decorator(mut f: impl FnMut(String)) -> rustyline::Result<()> {
             Err(err) => match err {
                 ReadlineError::Interrupted | ReadlineError::Eof => exit(0),
                 err => {
-                    print_error(err);
+                    log::error!("{}", err);
 
                     exit(1);
                 }

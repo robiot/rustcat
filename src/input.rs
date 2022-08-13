@@ -15,6 +15,9 @@ use clap::{Parser, Subcommand};
 pub struct Opts {
     #[clap(subcommand)]
     pub command: Command,
+
+    // #[clap(short, long)]
+    // verbose: bool,
 }
 
 #[derive(Subcommand, Debug)]
