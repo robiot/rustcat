@@ -1,7 +1,4 @@
-//! Rustcat (rc)
-//! Licence: MIT
-
-use structopt::StructOpt;
+use clap::Parser;
 
 mod input;
 mod listener;
@@ -12,51 +9,79 @@ use utils::print_error;
 #[cfg(unix)]
 mod unixshell;
 
-fn main() {
-    let opts = input::Opts::from_args();
-
-    let (opt_host, opt_port) = if let Some(port) = opts.port {
-        ("0.0.0.0".to_string(), port)
-    } else if let [host, port] = &opts.host[..] {
+fn host_from_opts(host: Vec<String>) -> Result<(String, String), String> {
+    let fixed_host = if host.len() == 1 {
+        ("0.0.0.0".to_string(), host.get(0).unwrap().to_string()) // Safe to unwrap here
+    } else if let [host, port] = &host[..] {
         (host.to_string(), port.to_string())
     } else {
-        print_error("Missing port number");
-        return;
+        return Err("Missing host".to_string());
     };
 
-    // Reverse Shell
-    if let Some(rshell) = opts.rshell {
-        // Block usage on windows
-        #[cfg(windows)]
-        {
-            print_error("Reverse shells are currently not supported for windows");
-            return;
-        }
-        #[cfg(unix)]
-        if let Err(err) = unixshell::shell(opt_host, opt_port, rshell) {
-            print_error(err);
-            return;
-        }
-    }
-    // Listen mode
-    else if opts.listen_mode {
-        let opts = utils::Opts {
-            host: opt_host,
-            port: opt_port,
-            exec: opts.exec,
-            mode: if opts.history {
-                utils::Mode::History
-            } else if opts.local_history {
-                utils::Mode::LocalHistory
-            } else {
-                utils::Mode::Normal
-            },
-        };
+    Ok(fixed_host)
+}
 
-        if let Err(err) = listener::listen(&opts) {
-            print_error(err);
-            return;
-        };
+fn main() {
+    let opts = input::Opts::parse();
+
+    match opts.command {
+        input::Command::Listen {
+            interactive,
+            local_interactive,
+            exec,
+            host,
+        } => {
+            let (host, port) = match host_from_opts(host) {
+                Ok(value) => value,
+                Err(err) => {
+                    print_error(err);
+
+                    return;
+                }
+            };
+                let opts = listener::Opts {
+                    host,
+                    port,
+                    exec,
+                    mode: if interactive {
+                        listener::Mode::Interactive
+                    } else if local_interactive {
+                        listener::Mode::LocalInteractive
+                    } else {
+                        listener::Mode::Normal
+                    },
+                };
+
+                if let Err(err) = listener::listen(&opts) {
+                    print_error(err);
+                    return;
+                };
+        }
+        input::Command::Connect { shell, host } => {
+            let (host, port) = match host_from_opts(host) {
+                Ok(value) => value,
+                Err(err) => {
+                    print_error(err);
+
+                    return;
+                }
+            };
+
+            // Block usage on windows
+            #[cfg(windows)]
+            {
+                print_error("This feature is not supported for windows");
+
+                return;
+            }
+
+            #[cfg(unix)]
+            if let Err(err) = unixshell::shell(host, port, shell) {
+                print_error(err);
+
+                return;
+            }
+        }
     }
 }
 
