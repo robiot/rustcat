@@ -1,9 +1,10 @@
 use std::fs::OpenOptions;
+use std::io::Result;
 use std::os::unix::io::AsRawFd;
-use termios::*;
+use termios::{Termios, ECHO, ICANON, tcsetattr, TCSADRAIN};
 
 /* https://man7.org/linux/man-pages/man3/tcflow.3.html */
-pub fn setup_fd() -> std::io::Result<()> {
+pub fn setup_fd() -> Result<()> {
     let tty = OpenOptions::new().write(true).read(true).open("/dev/tty")?;
     let fd = tty.as_raw_fd();
     let mut termios = Termios::from_fd(fd)?;

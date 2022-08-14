@@ -1,5 +1,4 @@
 use colored::Colorize;
-use rustyline;
 use rustyline::error::ReadlineError;
 use std::io::{stdin, stdout, Read, Result, Write};
 use std::net::{TcpListener, TcpStream};
@@ -90,11 +89,8 @@ fn listen_tcp_normal(stream: TcpStream, opts: &Opts) -> Result<()> {
     Ok(())
 }
 
-// Listen on given host and port
-pub fn listen(opts: &Opts) -> rustyline::Result<()> {
-    let listener = TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
-
-    if opts.block_signals  {
+fn block_signals(should_block: bool) -> Result<()> {
+    if should_block {
         #[cfg(unix)]
         {
             Signals::new(&[consts::SIGINT])?;
@@ -103,23 +99,39 @@ pub fn listen(opts: &Opts) -> rustyline::Result<()> {
         #[cfg(not(unix))]
         {
             print_feature_not_supported();
+
+            exit(1);
+        }
+    }
+
+    Ok(())
+}
+// Listen on given host and port
+pub fn listen(opts: &Opts) -> rustyline::Result<()> {
+    let listener = TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
+
+    #[cfg(not(unix))]
+    {
+        if let Mode::Interactive = opts.mode {
+            print_feature_not_supported();
+
+            exit(1);
         }
     }
 
     log::info!("Listening on {}:{}", opts.host.green(), opts.port.cyan());
 
     let (mut stream, _) = listener.accept()?;
+
     match &opts.mode {
         Mode::Interactive => {
+            // It exists it if isn't unix above
+            block_signals(opts.block_signals)?;
+
             #[cfg(unix)]
             {
                 termios_handler::setup_fd()?;
                 listen_tcp_normal(stream, opts)?;
-            }
-
-            #[cfg(not(unix))]
-            {
-                print_feature_not_supported();
             }
         }
         Mode::LocalInteractive => {
@@ -132,9 +144,11 @@ pub fn listen(opts: &Opts) -> rustyline::Result<()> {
                     .write_all((command + "\n").as_bytes())
                     .expect("Failed to send TCP.");
             })?;
+
             t.join().unwrap();
         }
         Mode::Normal => {
+            block_signals(opts.block_signals)?;
             listen_tcp_normal(stream, opts)?;
         }
     }
