@@ -24,7 +24,7 @@ pub enum Command {
         interactive: bool,
 
         /// Block exit signals like CTRL-C
-        #[clap(short, long)]
+        #[clap(short, long, conflicts_with = "local-interactive")]
         block_signals: bool,
 
         /// Local interactive
