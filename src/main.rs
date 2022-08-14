@@ -4,8 +4,6 @@ use fern::colors::{Color, ColoredLevelConfig};
 mod input;
 mod listener;
 
-// use colored::Colorize;
-
 #[cfg(unix)]
 mod unixshell;
 
@@ -102,7 +100,6 @@ fn main() {
                 return;
             }
 
-            // Block usage on other operating systems
             #[cfg(not(unix))]
             {
                 log::error!("This feature is not supported on your platform");

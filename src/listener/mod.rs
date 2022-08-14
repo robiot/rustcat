@@ -1,8 +1,3 @@
-/*
-Name: listener.rs
-Description: Listens on given arguments.
-*/
-
 use colored::Colorize;
 use rustyline;
 use rustyline::error::ReadlineError;
@@ -95,7 +90,7 @@ fn listen_tcp_normal(stream: TcpStream, opts: &Opts) -> Result<()> {
     Ok(())
 }
 
-/* Listen on given host and port */
+// Listen on given host and port
 pub fn listen(opts: &Opts) -> rustyline::Result<()> {
     let listener = TcpListener::bind(format!("{}:{}", opts.host, opts.port))?;
 
