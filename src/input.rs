@@ -1,8 +1,3 @@
-/*
-Name: input.rs
-Description: Setup Structopt Struct.
-*/
-
 use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
@@ -10,7 +5,6 @@ use clap::{Parser, Subcommand};
     name = "rustcat",
     version,
     setting(clap::AppSettings::ArgRequiredElseHelp),
-    // setting(clap::AppSettings::ColorNever)
 )]
 pub struct Opts {
     #[clap(subcommand)]
