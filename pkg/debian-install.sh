@@ -7,7 +7,7 @@ main(){
 
     echo "Getting latest version..."
     version=$(curl --silent "https://api.github.com/repos/robiot/rustcat/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | cut -c 2-)
-    name="rustcat_${version}_amd64.deb"
+    name="rcat-${version}-linux-x86_64.deb"
 
     echo "Found $name"
 
