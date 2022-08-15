@@ -28,7 +28,7 @@ Rustcat is an easy to use port listener and reverse shell for Linux, MacOS, and 
 Check out the [Installation Guide](https://github.com/robiot/rustcat/wiki/Installation-Guide). Or if you want to have it portable, check out the [latest release](https://github.com/robiot/rustcat/releases/latest)
 
 ## Usage
-The most basic and useful example to start listening on a port would be:
+The most basic and useful example to start listening on a port would be (you can even run vim inside rustcat with this):
 ```
 rcat listen -ib 55600
 ```
