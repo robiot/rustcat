@@ -27,7 +27,7 @@ jobs:
       - name: "Move to outputs/ folder"
         run: |
           mkdir outputs
-          cp target/release/*.exe outputs/rcat-${{github.ref_name}}-win.exe
+          cp target/release/*.exe outputs/rcat-${{github.ref_name}}-win-x86_64.exe
 
       - name: Upload to temporary storage
         uses: actions/upload-artifact@master
