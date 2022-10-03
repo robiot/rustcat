@@ -18,7 +18,7 @@ Rustcat is an easy to use port listener and reverse shell for Linux, MacOS, and 
 - Listen mode (listen);
 - Reverse shell mode (connect);
 
-## Featurees
+## Features
 - Command history & Tab completion (Interactive mode);
 - CTRL-C blocking;
 - Colors;
