@@ -31,7 +31,7 @@ pub enum Command {
         #[clap(short, long, conflicts_with = "interactive")]
         local_interactive: bool,
 
-        /// Execute command when connection recieved
+        /// Execute command when connection received
         #[clap(short, long)] // hidden
         exec: Option<String>,
 
