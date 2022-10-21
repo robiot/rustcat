@@ -25,8 +25,8 @@ pub enum Mode {
     LocalInteractive,
 }
 
-fn print_connection_recieved() {
-    log::info!("Connection Recived");
+fn print_connection_received() {
+    log::info!("Connection Received");
 }
 
 // It will complain on unix systems without this lint rule.
@@ -81,7 +81,7 @@ fn listen_tcp_normal(stream: TcpStream, opts: &Opts) -> Result<()> {
         pipe_thread(stream, stdout()),
     );
 
-    print_connection_recieved();
+    print_connection_received();
 
     stdin_thread.join().unwrap();
     stdout_thread.join().unwrap();
