@@ -137,7 +137,7 @@ pub fn listen(opts: &Opts) -> rustyline::Result<()> {
         Mode::LocalInteractive => {
             let t = pipe_thread(stream.try_clone()?, stdout());
 
-            print_connection_recieved();
+            print_connection_received();
 
             readline_decorator(|command| {
                 stream
