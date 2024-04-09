@@ -3,7 +3,7 @@ name = "rustcat"
 version = "3.0.0"
 authors = ["robiot"]
 description = "The Modern Port Listener and Reverse Shell"
-license = "GPL-3.0"
+license = "GPL-3.0-only"
 repository = "https://github.com/robiot/rustcat"
 edition = "2021"
 
