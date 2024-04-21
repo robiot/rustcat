@@ -6,7 +6,7 @@ main(){
     which curl >/dev/null && echo "Curl installed, moving on..." || sudo apt install curl
 
     echo "Getting latest version..."
-    version=$(curl --silent "https://api.github.com/repos/robiot/rustcat/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | cut -c 2-)
+    version=$(curl --silent "https://api.github.com/repos/robiot/rustcat/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     name="rcat-${version}-linux-x86_64.deb"
 
     echo "Found $name"
