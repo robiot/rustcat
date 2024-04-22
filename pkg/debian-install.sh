@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Tested on kali linux 2021.2 live iso
+# Tested on kali linux 2024.1 VMware image
 main(){
     echo "Welcome to the Rustcat Debian installer"
     which curl >/dev/null && echo "Curl installed, moving on..." || sudo apt install curl
