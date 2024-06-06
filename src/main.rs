@@ -11,6 +11,9 @@ mod listener;
 #[cfg(unix)]
 mod unixshell;
 
+#[cfg(windows)]
+mod winshell;
+
 fn host_from_opts(host: Vec<String>) -> Result<(String, String), String> {
     let fixed_host = if host.len() == 1 {
         ("0.0.0.0".to_string(), host.get(0).unwrap().to_string()) // Safe to unwrap here
@@ -101,7 +104,12 @@ fn main() {
                 log::error!("{}", err);
             }
 
-            #[cfg(not(unix))]
+            #[cfg(windows)]
+            if let Err(err) = winshell::shell(host, port, shell) {
+                log::error!("{}", err);
+            }
+
+            #[cfg(not(any(unix, windows)))]
             {
                 log::error!("This feature is not supported on your platform");
             }

