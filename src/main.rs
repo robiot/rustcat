@@ -43,7 +43,7 @@ fn main() {
             ))
         })
         .level(log::LevelFilter::Warn)
-        .level(log::LevelFilter::Info) 
+        .level(log::LevelFilter::Info)
         .chain(stdout())
         .apply()
     {
