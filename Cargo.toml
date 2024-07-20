@@ -12,12 +12,12 @@ name = "rcat"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "3.2.17", features = ["derive"] }
-colored = "2.0.0"
-rustyline = "10.0.0"
-log = "0.4.17"
-fern = { version = "0.6.1", features = ["colored"] }
+clap = { version = "4.5.9", features = ["derive"] }
+colored = "2.1.0"
+rustyline = "14.0.0"
+log = "0.4.22"
+fern = { version = "0.6.2", features = ["colored"] }
 
 [target.'cfg(unix)'.dependencies]
 termios = "0.3"
-signal-hook = "0.3.14"
+signal-hook = "0.3.17"

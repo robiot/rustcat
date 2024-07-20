@@ -1,15 +1,10 @@
 use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
-#[clap(
-    name = "rustcat",
-    version,
-    setting(clap::AppSettings::ArgRequiredElseHelp),
-)]
+#[clap(name = "rustcat", version, arg_required_else_help(true))]
 pub struct Opts {
     #[clap(subcommand)]
     pub command: Command,
-
     // #[clap(short, long)]
     // verbose: bool,
 }
@@ -20,7 +15,7 @@ pub enum Command {
     #[clap(alias = "l")]
     Listen {
         /// Interactive
-        #[clap(short, long)]
+        #[clap(short, long, name = "interactive")]
         interactive: bool,
 
         /// Block exit signals like CTRL-C
@@ -28,7 +23,12 @@ pub enum Command {
         block_signals: bool,
 
         /// Local interactive
-        #[clap(short, long, conflicts_with = "interactive")]
+        #[clap(
+            short,
+            long,
+            name = "local-interactive",
+            conflicts_with = "interactive"
+        )]
         local_interactive: bool,
 
         /// Execute command when connection received
@@ -36,7 +36,7 @@ pub enum Command {
         exec: Option<String>,
 
         // Host:ip, IP if only 1 value provided
-        #[clap(max_values = 2)]
+        #[clap(num_args = ..=2)]
         host: Vec<String>,
     },
 
@@ -48,7 +48,7 @@ pub enum Command {
         shell: String,
 
         // Host:ip, IP if only 1 value provided
-        #[clap(max_values = 2)]
+        #[clap(num_args = ..=2)]
         host: Vec<String>,
     },
 }
